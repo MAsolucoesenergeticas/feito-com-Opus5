@@ -19,7 +19,7 @@
      1. CONFIGURAÇÃO
      ====================================================================== */
   var CONFIG = {
-    telefone: '5545998067998',
+    telefone: '55459991262160',
     mensagemBase: 'Olá! Vim pelo site da M&A Soluções Energéticas e gostaria de um orçamento de energia solar.',
     iconeWa: '<svg class="ico-wa" aria-hidden="true" focusable="false"><use href="#i-wa"></use></svg>',
     chat: {
@@ -32,7 +32,7 @@
 
   /* ======================================================================
      2. CONTEXTO DA PÁGINA (INTENÇÃO + CIDADE)
-     Lê o <h1> da página e adapta a fala da Ana Paula, o texto do
+     Lê o <h1> da página e adapta a fala do Magnum, o texto do
      botão do chat e a mensagem pré-preenchida do WhatsApp.
      ====================================================================== */
   var CIDADES = [
@@ -62,7 +62,7 @@
   /* Regras avaliadas de cima para baixo — a PRIMEIRA que casar vence.
      Ao adicionar regras novas, coloque as mais específicas no topo.
      re  = padrão buscado no H1
-     msg = fala da Ana Paula
+     msg = fala da Magnum
      cta = texto do botão dentro do chat
      wa  = mensagem enviada no WhatsApp ({CIDADE_EM} vira " em Toledo") */
   var INTENCOES = [
@@ -284,7 +284,7 @@
 
       soltarFundo();
     }
-    
+
     /* restaurar = false quando o fechamento vem de navegação por âncora */
     function fechar(restaurar) {
       if (!estaAberto()) return;
