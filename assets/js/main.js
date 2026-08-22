@@ -460,89 +460,14 @@
   /* ======================================================================
      9. INICIALIZAÇÃO
      ====================================================================== */
-    function iniciarMenuMobile() {
-    var burger  = document.getElementById('burger');
-    var menu    = document.getElementById('menu');
-    var overlay = document.getElementById('overlay');
-
-    if (!burger || !menu) return;
-
-    /* ---- Portal: reparenta menu e overlay direto no <body> ----
-       Guarda a posição original para restaurar no desktop.       */
-    var ancora = document.createComment('menu-slot');
-    menu.parentNode.insertBefore(ancora, menu);
-
-    var noBody = false;
-
-    function paraBody() {
-      if (noBody) return;
-      document.body.appendChild(menu);
-      if (overlay) document.body.appendChild(overlay);
-      noBody = true;
-    }
-
-    function paraHeader() {
-      if (!noBody) return;
-      ancora.parentNode.insertBefore(menu, ancora);
-      noBody = false;
-    }
-
-    var mq = window.matchMedia('(max-width:980px)');
-
-    function aplicarMq() {
-      if (mq.matches) { paraBody(); } else { fechar(); paraHeader(); }
-    }
-
-    /* ---- Abrir / fechar ---- */
-    var scrollY = 0;
-
-    function abrir() {
-      scrollY = window.scrollY || window.pageYOffset;
-      menu.classList.add('is-open');
-      if (overlay) overlay.classList.add('is-on');
-      burger.classList.add('is-x');
-      burger.setAttribute('aria-expanded', 'true');
-      document.body.style.top = (-scrollY) + 'px';
-      document.body.classList.add('nav-open');
-    }
-
-    function fechar() {
-      if (!menu.classList.contains('is-open')) return;
-      menu.classList.remove('is-open');
-      if (overlay) overlay.classList.remove('is-on');
-      burger.classList.remove('is-x');
-      burger.setAttribute('aria-expanded', 'false');
-      document.body.classList.remove('nav-open');
-      document.body.style.top = '';
-      window.scrollTo(0, scrollY);
-    }
-
-    burger.addEventListener('click', function (e) {
-      e.stopPropagation();
-      if (menu.classList.contains('is-open')) { fechar(); } else { abrir(); }
-    });
-
-    if (overlay) overlay.addEventListener('click', fechar);
-
-    document.addEventListener('click', function (e) {
-      if (!menu.classList.contains('is-open')) return;
-      if (menu.contains(e.target) || burger.contains(e.target)) return;
-      fechar();
-    });
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') fechar();
-    });
-
-    Array.prototype.forEach.call(menu.querySelectorAll('a'), function (a) {
-      a.addEventListener('click', fechar);
-    });
-
-    aplicarMq();
-    if (mq.addEventListener) { mq.addEventListener('change', aplicarMq); }
-    else { mq.addListener(aplicarMq); }
+  function init() {
+    iniciarBotoesWhatsApp();
+    iniciarMenuMobile();
+    iniciarFaq();
+    marcarPaginaAtual();
+    iniciarChatProativo();
+    iniciarMapaSobDemanda();
   }
-
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
