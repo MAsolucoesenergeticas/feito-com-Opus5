@@ -4,7 +4,7 @@
    1. Configuração
    2. Contexto da página (intenção + cidade)
    3. Botões de WhatsApp
-   4. Menu mobile
+   4. Menu mobile  ← corrigido
    5. FAQ (acordeão)
    6. Página atual no menu
    7. Chat proativo (expandir / minimizar)
@@ -223,56 +223,170 @@
 
   /* ======================================================================
      4. MENU MOBILE
+
+     Três problemas resolvidos aqui:
+
+     a) O <header> tem backdrop-filter, que cria containing block e
+        aprisiona o position:fixed do menu. Solução: no mobile o menu
+        é reparentado para dentro do <body>, sem ancestral algum.
+
+     b) A rolagem do fundo é travada com position:fixed + top:-scrollY,
+        que funciona também no iOS (overflow:hidden não funciona lá).
+
+     c) Ao clicar num link de âncora, o fechamento NÃO restaura o scroll
+        anterior — quem manda é a âncora. Sem isso, o scrollY guardado
+        ficava errado e o menu abria fora da tela na próxima vez.
      ====================================================================== */
   function iniciarMenuMobile() {
     var burger  = document.getElementById('burger');
     var menu    = document.getElementById('menu');
     var overlay = document.getElementById('overlay');
+    var header  = document.querySelector('header');
 
     if (!burger || !menu) return;
 
+    /* Comentário-âncora: marca o lugar original do menu dentro do <nav>,
+       para devolvê-lo quando a tela voltar a ser desktop. */
+    var slot = document.createComment('menu-slot');
+    menu.parentNode.insertBefore(slot, menu);
+
+    var mq = window.matchMedia('(max-width:980px)');
+    var scrollY = 0;
+
+    function estaAberto() {
+      return menu.classList.contains('is-open');
+    }
+
+    function travarFundo() {
+      scrollY = window.scrollY || window.pageYOffset || 0;
+      document.body.style.position = 'fixed';
+      document.body.style.top = (-scrollY) + 'px';
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+      document.body.classList.add('nav-open');
+    }
+
+    function soltarFundo() {
+      document.body.classList.remove('nav-open');
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+    }
+
     function abrir() {
+      if (estaAberto()) return;
+      travarFundo();
       menu.classList.add('is-open');
       if (overlay) overlay.classList.add('is-on');
       burger.classList.add('is-x');
       burger.setAttribute('aria-expanded', 'true');
       burger.setAttribute('aria-label', 'Fechar menu');
-      document.body.style.overflow = 'hidden';
     }
 
-    function fechar() {
+    /* restaurar = false quando o fechamento vem de navegação por âncora */
+    function fechar(restaurar) {
+      if (!estaAberto()) return;
+
       menu.classList.remove('is-open');
       if (overlay) overlay.classList.remove('is-on');
       burger.classList.remove('is-x');
       burger.setAttribute('aria-expanded', 'false');
       burger.setAttribute('aria-label', 'Abrir menu');
-      document.body.style.overflow = '';
+
+      soltarFundo();
+
+      if (restaurar !== false) window.scrollTo(0, scrollY);
     }
 
-    function alternar() {
-      if (menu.classList.contains('is-open')) {
-        fechar();
+    /* Reparenta o menu conforme a largura da tela */
+    function sincronizar() {
+      if (mq.matches) {
+        if (menu.parentNode !== document.body) document.body.appendChild(menu);
       } else {
-        abrir();
+        fechar(false);
+        if (menu.parentNode === document.body) slot.parentNode.insertBefore(menu, slot);
       }
     }
 
-    burger.addEventListener('click', alternar);
-    if (overlay) overlay.addEventListener('click', fechar);
-
-    /* Fecha ao clicar em qualquer link do menu */
-    Array.prototype.forEach.call(menu.querySelectorAll('a'), function (link) {
-      link.addEventListener('click', fechar);
+    /* ---- Botão sanduíche ---- */
+    burger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (estaAberto()) fechar(); else abrir();
     });
 
-    /* Fecha com a tecla ESC */
+    /* ---- Fundo escuro ---- */
+    if (overlay) {
+      overlay.addEventListener('click', function () { fechar(); });
+    }
+
+    /* ---- Clique em qualquer ponto fora do menu e fora do burger ---- */
+    document.addEventListener('click', function (e) {
+      if (!estaAberto()) return;
+      if (menu.contains(e.target)) return;
+      if (burger.contains(e.target)) return;
+      fechar();
+    });
+
+    /* ---- Tecla ESC ---- */
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && menu.classList.contains('is-open')) fechar();
+      if (e.key === 'Escape') fechar();
     });
 
-    /* Garante estado limpo ao voltar para desktop */
-    window.addEventListener('resize', function () {
-      if (window.innerWidth > 980 && menu.classList.contains('is-open')) fechar();
+    /* ---- Links do menu ---- */
+    Array.prototype.forEach.call(menu.querySelectorAll('a'), function (link) {
+      link.addEventListener('click', function (e) {
+        var href = link.getAttribute('href') || '';
+
+        /* Âncora interna: o JS assume a rolagem, para não brigar
+           com o restore do fechar() */
+        if (href.charAt(0) === '#' && href.length > 1) {
+          var alvo = null;
+          try { alvo = document.querySelector(href); } catch (err) { alvo = null; }
+
+          if (alvo) {
+            e.preventDefault();
+            fechar(false);
+
+            /* Espera o body destravar antes de calcular a posição */
+            requestAnimationFrame(function () {
+              var off = header ? header.offsetHeight + 12 : 76;
+              var top = alvo.getBoundingClientRect().top + window.pageYOffset - off;
+              if (top < 0) top = 0;
+
+              try {
+                window.scrollTo({ top: top, behavior: 'smooth' });
+              } catch (err) {
+                window.scrollTo(0, top);
+              }
+
+              if (history.replaceState) history.replaceState(null, '', href);
+            });
+            return;
+          }
+        }
+
+        /* Link externo ou para outra página: só fecha, sem restaurar */
+        fechar(false);
+      });
+    });
+
+    /* ---- Reage à troca de mobile ↔ desktop ---- */
+    sincronizar();
+    if (mq.addEventListener) {
+      mq.addEventListener('change', sincronizar);
+    } else if (mq.addListener) {
+      mq.addListener(sincronizar);
+    }
+
+    /* Segurança: se a página for restaurada do cache do navegador
+       com o body travado, destrava. */
+    window.addEventListener('pageshow', function () {
+      if (!estaAberto()) soltarFundo();
     });
   }
 
