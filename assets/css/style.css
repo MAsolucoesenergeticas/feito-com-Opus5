@@ -706,3 +706,65 @@ body{overflow-x:clip}
 .chat-w.is-on{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
 .chat-w.is-min .chat-mini{background:linear-gradient(135deg,var(--wa2),var(--wa3))}
 .chat-w.is-min .chat-avatar-mini::after{display:none}
+/* ==========================================================================
+   19. AJUSTES FINAIS
+   ========================================================================== */
+
+/* ---- 19.1 · Logo com presença ---- */
+.logo{
+  font-size:23px;line-height:1.1;
+  display:flex;flex-direction:column;white-space:nowrap;
+}
+.logo em{font-size:12px;letter-spacing:.02em;font-weight:700;margin-top:1px}
+
+@media(max-width:980px){
+  .logo{font-size:21px}
+  .logo em{font-size:11px}
+}
+@media(max-width:400px){
+  .logo{font-size:18px}
+  .logo em{font-size:9.5px}
+}
+
+/* ---- 19.2 · CTA do topo: some no mobile (burger assume) ---- */
+@media(max-width:980px){
+  .nav .nav-cta{display:none !important}
+}
+
+/* ---- 19.3 · FAQ: resposta aparece ---- */
+.faq-a{display:none}
+.faq-a.is-open,
+.faq-a.open{display:block !important}
+.faq-q.is-open::after,
+.faq-q[aria-expanded="true"]::after{content:"–"}
+
+/* ---- 19.4 · Widget substitui o flutuante ---- */
+#whatsapp-float{display:none !important}
+
+.chat-w{bottom:24px}
+@media(max-width:1023px){.chat-w{bottom:22px}}
+@media(max-width:720px){
+  .chat-w{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+}
+@media(max-height:620px) and (max-width:1023px){
+  .chat-w{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+}
+
+/* ---- 19.5 · Pílula minimizada com ícone WhatsApp ---- */
+.chat-w.is-min .chat-mini{
+  background:linear-gradient(135deg,var(--wa1),var(--wa2)) !important;
+  box-shadow:0 10px 30px rgba(18,140,126,.42);
+}
+.chat-w.is-min .chat-mini:hover{
+  box-shadow:0 14px 38px rgba(37,211,102,.5);
+}
+.ico-mini{
+  width:15px;height:15px;fill:#fff;
+  vertical-align:-2px;margin-right:6px;
+}
+.chat-mini-txt b{display:flex;align-items:center}
+.chat-w.is-min .chat-avatar-mini::after{
+  content:"";position:absolute;right:-1px;bottom:-1px;
+  width:12px;height:12px;border-radius:50%;
+  background:#4ADE80;border:2px solid var(--wa2);
+}
