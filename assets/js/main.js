@@ -259,23 +259,14 @@
 
     function travarFundo() {
       scrollY = window.scrollY || window.pageYOffset || 0;
-      document.body.style.position = 'fixed';
-      document.body.style.top = (-scrollY) + 'px';
-      document.body.style.left = '0';
-      document.body.style.right = '0';
-      document.body.style.width = '100%';
-      document.body.style.overflow = 'hidden';
+      /* Sem position:fixed no body: em celular ele arrasta o menu junto */
+      document.documentElement.classList.add('nav-lock');
       document.body.classList.add('nav-open');
     }
 
     function soltarFundo() {
+      document.documentElement.classList.remove('nav-lock');
       document.body.classList.remove('nav-open');
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.left = '';
-      document.body.style.right = '';
-      document.body.style.width = '';
-      document.body.style.overflow = '';
     }
 
     function abrir() {
