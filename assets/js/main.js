@@ -543,6 +543,7 @@
     else { mq.addListener(aplicarMq); }
   }
 
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
