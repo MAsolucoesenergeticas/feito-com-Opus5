@@ -411,3 +411,209 @@ footer.site a:hover{color:var(--primary)}
 .btn-wa{display:inline-flex;align-items:center;justify-content:center;gap:9px}
 .btn-wa.wa-block{display:flex;width:100%}
 #whatsapp-float{display:flex;align-items:center;justify-content:center}
+/* ==========================================================================
+   17. CORREÇÕES DO HEADER MOBILE
+   ========================================================================== */
+
+/* ---- 17.1 · Barra do topo: evita estouro horizontal ---- */
+html,body{overflow-x:hidden;max-width:100%}
+
+.nav{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:14px;flex-wrap:nowrap;
+}
+.logo{flex:0 1 auto;min-width:0}
+
+/* ---- 17.2 · Botão sanduíche alinhado e proporcional ---- */
+.burger{
+  display:none;
+  width:44px;height:44px;flex:0 0 44px;
+  padding:0;margin:0;border:0;background:none;cursor:pointer;
+  flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  border-radius:11px;transition:background .2s;
+}
+.burger:hover{background:rgba(255,255,255,.09)}
+.burger:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.burger span{
+  display:block;width:23px;height:2px;border-radius:2px;
+  background:#fff;transition:transform .28s,opacity .2s;
+}
+.burger.is-x span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger.is-x span:nth-child(2){opacity:0}
+.burger.is-x span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ---- 17.3 · CTA do topo: discreto no mobile ---- */
+@media(max-width:980px){
+  .burger{display:flex}
+
+  /* Some com o botão grande e usa só o ícone circular */
+  .nav-cta{
+    width:44px;height:44px;flex:0 0 44px;
+    padding:0;gap:0;border-radius:50%;
+    font-size:0;line-height:0;overflow:hidden;
+  }
+  .nav-cta .ico-wa{width:20px;height:20px;flex:0 0 20px;margin:0}
+
+  .logo{font-size:17px}
+  .logo em{font-size:10.5px}
+}
+
+@media(max-width:400px){
+  .nav{gap:9px}
+  .logo{font-size:15.5px}
+  .logo em{font-size:9.5px}
+  .nav-cta,.burger{width:40px;height:40px;flex-basis:40px}
+}
+
+/* ---- 17.4 · Menu lateral: não passa da tela ---- */
+@media(max-width:980px){
+  .menu{
+    position:fixed;top:0;right:0;
+    width:min(83vw,320px);height:100vh;height:100dvh;
+    max-width:100%;
+    display:flex;flex-direction:column;align-items:stretch;
+    gap:0;margin:0;padding:84px 22px 30px;
+    background:var(--secondary);
+    box-shadow:-14px 0 40px rgba(0,0,0,.32);
+    transform:translateX(102%);
+    transition:transform .3s ease;
+    overflow-y:auto;overscroll-behavior:contain;
+    z-index:120;
+  }
+  .menu.is-open{transform:translateX(0)}
+
+  .menu li{width:100%;border-bottom:1px solid rgba(255,255,255,.09)}
+  .menu li:last-child{border:0}
+  .menu li a{
+    display:block;width:100%;
+    padding:15px 2px;font-size:15.5px;
+  }
+
+  .menu .mobile-cta{margin-top:22px;padding:0}
+  .menu .mobile-cta .btn-wa{
+    width:100%;font-size:14.5px;
+    padding:14px 16px;white-space:nowrap;
+  }
+  .menu .mobile-cta .ico-wa{width:18px;height:18px;flex:0 0 18px}
+
+  .overlay{
+    position:fixed;inset:0;z-index:110;
+    background:rgba(4,14,26,.6);
+    opacity:0;visibility:hidden;transition:.28s;
+  }
+  .overlay.is-on{opacity:1;visibility:visible}
+}
+
+/* ---- 17.5 · Desktop: garante o layout original ---- */
+@media(min-width:981px){
+  .burger{display:none}
+  .menu .mobile-cta{display:none}
+  .menu{
+    position:static;transform:none;height:auto;width:auto;
+    flex-direction:row;background:none;box-shadow:none;
+    padding:0;overflow:visible;
+  }
+}
+/* ==========================================================================
+   17. CORREÇÕES DO HEADER MOBILE
+   ========================================================================== */
+
+/* ---- 17.1 · Barra do topo: evita estouro horizontal ---- */
+html,body{overflow-x:hidden;max-width:100%}
+
+.nav{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:14px;flex-wrap:nowrap;
+}
+.logo{flex:0 1 auto;min-width:0}
+
+/* ---- 17.2 · Botão sanduíche alinhado e proporcional ---- */
+.burger{
+  display:none;
+  width:44px;height:44px;flex:0 0 44px;
+  padding:0;margin:0;border:0;background:none;cursor:pointer;
+  flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  border-radius:11px;transition:background .2s;
+}
+.burger:hover{background:rgba(255,255,255,.09)}
+.burger:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.burger span{
+  display:block;width:23px;height:2px;border-radius:2px;
+  background:#fff;transition:transform .28s,opacity .2s;
+}
+.burger.is-x span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger.is-x span:nth-child(2){opacity:0}
+.burger.is-x span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ---- 17.3 · CTA do topo: discreto no mobile ---- */
+@media(max-width:980px){
+  .burger{display:flex}
+
+  /* Some com o botão grande e usa só o ícone circular */
+  .nav-cta{
+    width:44px;height:44px;flex:0 0 44px;
+    padding:0;gap:0;border-radius:50%;
+    font-size:0;line-height:0;overflow:hidden;
+  }
+  .nav-cta .ico-wa{width:20px;height:20px;flex:0 0 20px;margin:0}
+
+  .logo{font-size:17px}
+  .logo em{font-size:10.5px}
+}
+
+@media(max-width:400px){
+  .nav{gap:9px}
+  .logo{font-size:15.5px}
+  .logo em{font-size:9.5px}
+  .nav-cta,.burger{width:40px;height:40px;flex-basis:40px}
+}
+
+/* ---- 17.4 · Menu lateral: não passa da tela ---- */
+@media(max-width:980px){
+  .menu{
+    position:fixed;top:0;right:0;
+    width:min(83vw,320px);height:100vh;height:100dvh;
+    max-width:100%;
+    display:flex;flex-direction:column;align-items:stretch;
+    gap:0;margin:0;padding:84px 22px 30px;
+    background:var(--secondary);
+    box-shadow:-14px 0 40px rgba(0,0,0,.32);
+    transform:translateX(102%);
+    transition:transform .3s ease;
+    overflow-y:auto;overscroll-behavior:contain;
+    z-index:120;
+  }
+  .menu.is-open{transform:translateX(0)}
+
+  .menu li{width:100%;border-bottom:1px solid rgba(255,255,255,.09)}
+  .menu li:last-child{border:0}
+  .menu li a{
+    display:block;width:100%;
+    padding:15px 2px;font-size:15.5px;
+  }
+
+  .menu .mobile-cta{margin-top:22px;padding:0}
+  .menu .mobile-cta .btn-wa{
+    width:100%;font-size:14.5px;
+    padding:14px 16px;white-space:nowrap;
+  }
+  .menu .mobile-cta .ico-wa{width:18px;height:18px;flex:0 0 18px}
+
+  .overlay{
+    position:fixed;inset:0;z-index:110;
+    background:rgba(4,14,26,.6);
+    opacity:0;visibility:hidden;transition:.28s;
+  }
+  .overlay.is-on{opacity:1;visibility:visible}
+}
+
+/* ---- 17.5 · Desktop: garante o layout original ---- */
+@media(min-width:981px){
+  .burger{display:none}
+  .menu .mobile-cta{display:none}
+  .menu{
+    position:static;transform:none;height:auto;width:auto;
+    flex-direction:row;background:none;box-shadow:none;
+    padding:0;overflow:visible;
+  }
+}
