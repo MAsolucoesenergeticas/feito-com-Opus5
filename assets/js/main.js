@@ -269,16 +269,22 @@
       document.body.classList.remove('nav-open');
     }
 
-    function abrir() {
-      if (estaAberto()) return;
-      travarFundo();
-      menu.classList.add('is-open');
-      if (overlay) overlay.classList.add('is-on');
-      burger.classList.add('is-x');
-      burger.setAttribute('aria-expanded', 'true');
-      burger.setAttribute('aria-label', 'Fechar menu');
-    }
+        /* restaurar = false quando o fechamento vem de navegação por âncora */
+    /* O parâmetro "restaurar" ficou sem uso: como o body não é mais
+       deslocado, a página nunca perde a posição. Mantido na assinatura
+       para não quebrar as chamadas existentes. */
+    function fechar(restaurar) {
+      if (!estaAberto()) return;
 
+      menu.classList.remove('is-open');
+      if (overlay) overlay.classList.remove('is-on');
+      burger.classList.remove('is-x');
+      burger.setAttribute('aria-expanded', 'false');
+      burger.setAttribute('aria-label', 'Abrir menu');
+
+      soltarFundo();
+    }
+    
     /* restaurar = false quando o fechamento vem de navegação por âncora */
     function fechar(restaurar) {
       if (!estaAberto()) return;
