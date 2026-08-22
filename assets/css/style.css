@@ -618,71 +618,91 @@ html,body{overflow-x:hidden;max-width:100%}
   }
 }
 /* ==========================================================================
-   18. CORREÇÃO FINAL · HEADER MOBILE (paleta + ícones)
+   17. CORREÇÕES CONSOLIDADAS (header mobile · FAQ · chat)
    ========================================================================== */
 
-/* ---- 18.1 · Barras do sanduíche visíveis ---- */
+/* ---- 17.1 · Anti-estouro sem matar o sticky ---- */
+body{overflow-x:clip}
+.nav{gap:14px;flex-wrap:nowrap}
+.logo{flex:0 1 auto;min-width:0}
+
+/* ---- 17.2 · Sanduíche escuro (header é branco) ---- */
 .burger{
-  background:transparent !important;
-  border:1px solid rgba(255,255,255,.22) !important;
+  width:44px;height:44px;flex:0 0 44px;padding:0;
+  border:1px solid var(--line);border-radius:10px;background:#fff;
+  flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  cursor:pointer;transition:background .2s;
 }
+.burger:hover{background:var(--light)}
 .burger span{
-  display:block !important;
-  width:22px !important;height:2.5px !important;
-  background:#FFFFFF !important;
-  border-radius:3px !important;
-  opacity:1 !important;
-  visibility:visible !important;
+  width:22px;height:2.5px;border-radius:3px;
+  background:var(--dark);
+  transition:transform .28s,opacity .2s;
 }
-.burger.is-x span:nth-child(1){transform:translateY(7.5px) rotate(45deg) !important}
-.burger.is-x span:nth-child(2){opacity:0 !important}
-.burger.is-x span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg) !important}
+.burger.is-x span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+.burger.is-x span:nth-child(2){opacity:0}
+.burger.is-x span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+.burger.is-x{background:var(--dark);border-color:var(--dark)}
+.burger.is-x span{background:#fff}
 
-/* ---- 18.2 · CTA do topo: círculo verde WhatsApp ---- */
+/* ---- 17.3 · CTA do topo: círculo verde no mobile ---- */
 @media(max-width:980px){
+  .burger{display:flex}
   .nav-cta{
-    background:#25D366 !important;
-    color:#fff !important;
-    border:0 !important;
-    box-shadow:0 4px 14px rgba(37,211,102,.34) !important;
     display:inline-flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    text-indent:0 !important;
+    width:44px;height:44px;flex:0 0 44px;
+    padding:0;gap:0;border-radius:50%;
+    font-size:0;line-height:0;overflow:hidden;
+    align-items:center;justify-content:center;
+    animation:none;
   }
-  .nav-cta .ico-wa{
-    fill:#fff !important;
-    margin:0 !important;
-    display:block !important;
-  }
+  .nav-cta::after{display:none}
+  .nav-cta .ico-wa{width:21px;height:21px;flex:0 0 21px;margin:0}
+  .logo{font-size:17px}
+}
+@media(max-width:400px){
+  .nav{gap:9px;padding:14px 16px}
+  .logo{font-size:15.5px}
+  .nav-cta,.burger{width:40px;height:40px;flex-basis:40px}
 }
 
-/* ---- 18.3 · Menu lateral na paleta do site ---- */
+/* ---- 17.4 · Menu lateral na paleta institucional ---- */
 @media(max-width:980px){
   .menu{
-    background:#08203A !important;   /* azul escuro institucional */
-    background-image:linear-gradient(175deg,#0B2A4A 0%,#08203A 62%) !important;
+    width:min(84vw,320px);
+    height:100dvh;max-width:100%;
+    background:linear-gradient(175deg,#0B2A4A,#08203A 62%);
+    box-shadow:-14px 0 40px rgba(0,0,0,.34);
+    transform:translateX(102%);
+    overscroll-behavior:contain;
   }
-  .menu li a{
-    color:#EAF2FA !important;
-    font-weight:600 !important;
-    text-decoration:none !important;
-    letter-spacing:.2px;
+  .menu.is-open{transform:translateX(0)}
+  .menu li{border-bottom:1px solid rgba(255,255,255,.10)}
+  .menu li:last-child{border:0}
+  .menu a{
+    display:block;padding:16px 2px;font-size:15.5px;
+    color:#EAF2FA;border:0;
     transition:color .2s,padding-left .2s;
   }
-  .menu li a:hover,
-  .menu li a:focus-visible,
-  .menu li a.is-active{
-    color:#F5B915 !important;        /* amarelo da marca */
-    padding-left:8px !important;
+  .menu a:hover,.menu a:focus-visible,.menu a.is-active{
+    color:var(--primary);padding-left:8px;border:0;
   }
-  .menu li{border-bottom-color:rgba(255,255,255,.10) !important}
-
-  /* CTA dentro do menu */
-  .menu .mobile-cta .btn-wa{
-    background:#25D366 !important;
-    color:#fff !important;
-    border:0 !important;
-  }
-  .menu .mobile-cta .btn-wa .ico-wa{fill:#fff !important}
+  .menu .mobile-cta{border:0;margin-top:24px}
+  .menu .mobile-cta a{padding:15px 16px;color:#fff}
+  .overlay.is-on{opacity:1;visibility:visible}
 }
+
+/* ---- 17.5 · Desktop intacto ---- */
+@media(min-width:981px){
+  .burger{display:none}
+  .menu .mobile-cta{display:none}
+}
+
+/* ---- 17.6 · FAQ: classe correta ---- */
+.faq-a.is-open{display:block}
+.faq-q.is-open::after{content:"–"}
+
+/* ---- 17.7 · Chat: classe correta + estados ---- */
+.chat-w.is-on{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
+.chat-w.is-min .chat-mini{background:linear-gradient(135deg,var(--wa2),var(--wa3))}
+.chat-w.is-min .chat-avatar-mini::after{display:none}
