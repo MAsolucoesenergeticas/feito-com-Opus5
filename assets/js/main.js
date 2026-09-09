@@ -1,592 +1,572 @@
 /* ==========================================================================
-   M&A SOLUÇÕES ENERGÉTICAS · main.js
-   Índice
-   1. Configuração
-   2. Contexto da página (intenção + cidade)
-   3. Botões de WhatsApp
-   4. Menu mobile  ← corrigido
-   5. FAQ (acordeão)
-   6. Página atual no menu
-   7. Chat proativo (expandir / minimizar)
-   8. Mapa sob demanda
-   9. Inicialização
+   M&A SOLUÇÕES ENERGÉTICAS · style.css
+   Sede: Medianeira · PR
+
+    1. Variáveis e reset          8. CTA, SEO e mapa
+    2. Utilitários                9. Rodapé
+    3. Botões WhatsApp           10. Barra mobile
+    4. Topbar e header           11. Chat Magnum
+    5. Hero e estatísticas       12. Acessibilidade
+    6. Blocos de conteúdo        13. Menu mobile
+    7. Navegação SEO             14. Responsivo
    ========================================================================== */
 
-(function () {
-  'use strict';
+/* ---------- 1. VARIÁVEIS E RESET ---------- */
+:root{
+  --primary:#F2A900;
+  --secondary:#0C63C8;
+  --dark:#08203A;
+  --light:#F5F7FA;
+  --text:#42505F;
+  --muted:#8A96A6;
+  --line:#E4E9F0;
+  --wa1:#25D366;
+  --wa2:#128C7E;
+  --wa3:#0E6E5F;
+  --font:'Inter','Segoe UI',Helvetica,Arial,sans-serif;
+  --h-header:76px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:var(--font);color:var(--text);line-height:1.75;font-size:16.5px;background:#fff}
+img{display:block;width:100%;height:100%;object-fit:cover}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit}
 
-  /* ======================================================================
-     1. CONFIGURAÇÃO
-     ====================================================================== */
-  var CONFIG = {
-    telefone: '55459991262160',
-    mensagemBase: 'Olá! Vim pelo site da M&A Soluções Energéticas e gostaria de um orçamento de energia solar.',
-    iconeWa: '<svg class="ico-wa" aria-hidden="true" focusable="false"><use href="#i-wa"></use></svg>',
-    chat: {
-      pergunta: 'Oi! Tudo bem? 😊 Vi que você está pesquisando energia solar. Quer que eu calcule quanto você economizaria por mês?',
-      ctaPadrao: 'Sim, quero saber!',
-      atrasoAbertura: 2600,
-      duracaoDigitando: 1700
-    }
-  };
+/* ---------- 2. UTILITÁRIOS ---------- */
+.container{max-width:1240px;margin:0 auto;padding:0 24px}
+.eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--secondary)}
+h1,h2,h3,h4{color:var(--dark);line-height:1.16;font-weight:800;letter-spacing:-.02em}
+section{padding:100px 0}
+.lead{font-size:19px;color:var(--muted)}
+.btn{display:inline-block;padding:15px 30px;border-radius:4px;font-weight:700;font-size:15px;transition:.25s}
+.btn-ghost{border:1px solid rgba(255,255,255,.45);color:#fff}
+.btn-ghost:hover{background:#fff;color:var(--dark)}
+.bg-light{background:var(--light)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
-  /* ======================================================================
-     2. CONTEXTO DA PÁGINA (INTENÇÃO + CIDADE)
-     Lê o <h1> da página e adapta a fala do Magnum, o texto do
-     botão do chat e a mensagem pré-preenchida do WhatsApp.
-     ====================================================================== */
-  var CIDADES = [
-    'Assis Chateaubriand', 'Barracão', 'Bela Vista da Caroba', 'Boa Vista da Aparecida',
-    'Bom Jesus do Sul', 'Cafelândia', 'Cambé', 'Campo Mourão', 'Capanema',
-    'Capitão Leônidas Marques', 'Cascavel', 'Catanduvas', 'Céu Azul', 'Chopinzinho',
-    'Cianorte', 'Clevelândia', 'Corbélia', "Diamante d'Oeste", 'Entre Rios do Oeste',
-    'Foz do Iguaçu', 'Francisco Alves', 'Francisco Beltrão', 'General Carneiro',
-    'Goioerê', 'Goioxim', "Itapejara d'Oeste", 'Lindoeste', 'Londrina', 'Mamborê',
-    'Mandaguaçu', 'Mandaguari', 'Marechal Cândido Rondon', 'Marialva', 'Mariluz',
-    'Maringá', 'Marmeleiro', 'Medianeira', 'Missal', 'Moreira Sales', 'Palotina',
-    'Pato Bragado', 'Pato Branco', 'Pérola', 'Planalto', 'Ponta Grossa', 'Ramilândia',
-    'Realeza', 'Santa Izabel do Oeste', 'Santa Tereza do Oeste',
-    'Santa Terezinha de Itaipu', 'São Miguel do Iguaçu', 'Sarandi',
-    'Serranópolis do Iguaçu', 'Terra Roxa', 'Ubiratã', 'Umuarama', 'Vera Cruz do Oeste'
-  ];
+/* Sprite SVG oculto — substitui o style="display:none" inline */
+.svg-sprite{display:none}
 
-  /* Remove acentos e baixa a caixa, para comparação segura */
-  function normalizar(txt) {
-    return (txt || '')
-      .toString()
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
+/* Compensa o header fixo ao pular para uma âncora */
+[id]{scroll-margin-top:calc(var(--h-header) + 12px)}
+
+/* ---------- 3. BOTÕES WHATSAPP ---------- */
+.btn-wa{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  padding:17px 34px;border:0;border-radius:50px;
+  background:linear-gradient(135deg,var(--wa1) 0%,var(--wa2) 55%,var(--wa3) 100%);
+  background-size:200% 200%;
+  color:#fff;font-family:inherit;font-weight:800;font-size:15.5px;letter-spacing:-.01em;
+  text-align:center;
+  box-shadow:0 8px 26px rgba(18,140,126,.38);
+  overflow:hidden;isolation:isolate;cursor:pointer;
+  animation:waPulse 2.6s ease-in-out infinite;
+  transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .28s,background-position .6s;
+}
+.btn-wa::after{
+  content:"";position:absolute;top:0;left:-120%;width:70%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.42),transparent);
+  transform:skewX(-22deg);animation:waShine 3.6s ease-in-out infinite;z-index:-1;
+}
+.btn-wa:hover{
+  transform:translateY(-4px) scale(1.045);
+  background-position:100% 50%;
+  box-shadow:0 16px 40px rgba(37,211,102,.5);
+  animation-play-state:paused;
+}
+.btn-wa:active{transform:translateY(-1px) scale(.99)}
+.btn-wa:focus-visible{outline:3px solid var(--primary);outline-offset:3px}
+.btn-wa.wa-lg{padding:21px 46px;font-size:17.5px}
+.btn-wa.wa-block{display:flex;width:100%}
+
+/* ícone SVG */
+.ico-wa{width:19px;height:19px;flex:0 0 19px;fill:currentColor;display:block;
+  animation:waWiggle 3.2s ease-in-out infinite}
+.wa-lg .ico-wa{width:22px;height:22px;flex:0 0 22px}
+
+@keyframes waPulse{
+  0%,100%{box-shadow:0 8px 26px rgba(18,140,126,.38),0 0 0 0 rgba(37,211,102,.55)}
+  55%{box-shadow:0 8px 26px rgba(18,140,126,.38),0 0 0 16px rgba(37,211,102,0)}
+}
+@keyframes waWiggle{
+  0%,86%,100%{transform:rotate(0) scale(1)}
+  90%{transform:rotate(-13deg) scale(1.16)}
+  94%{transform:rotate(11deg) scale(1.16)}
+  97%{transform:rotate(-5deg) scale(1.06)}
+}
+@keyframes waShine{0%,68%{left:-120%}100%{left:130%}}
+
+.wa-hint{display:block;margin-top:13px;font-size:13.5px;color:var(--muted);font-weight:600}
+.cta .wa-hint{color:#93A9C2}
+.wa-inline{margin:34px 0 0}
+.center-cta{text-align:center;margin-top:44px}
+
+.wa-strip{background:linear-gradient(135deg,#0B2A48,#08203A);padding:52px 0}
+.wa-strip .container{display:flex;align-items:center;justify-content:space-between;gap:34px;flex-wrap:wrap}
+.wa-strip h3{color:#fff;font-size:clamp(20px,2.3vw,27px);margin-bottom:6px}
+.wa-strip p{color:#9FB6CE;font-size:15.5px;max-width:560px}
+
+.wa-card{background:linear-gradient(160deg,#F0FBF5,#E4F7EC);border:1px solid #BFE9D2;
+  border-left:4px solid var(--wa1);border-radius:8px;padding:32px;margin-top:34px}
+.wa-card h4{font-size:19px;margin-bottom:8px}
+.wa-card p{font-size:15px;color:var(--text);margin-bottom:22px}
+
+/* ---------- 4. TOPBAR E HEADER ---------- */
+.topbar{background:var(--dark);color:#A9BDD6;font-size:12.5px;padding:10px 0}
+.topbar .container{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.topbar a{color:var(--wa1);font-weight:700}
+
+header{position:sticky;top:0;z-index:120;background:rgba(255,255,255,.94);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;
+  gap:14px;flex-wrap:nowrap;max-width:1240px;margin:0 auto;padding:18px 24px}
+
+.logo{flex:0 1 auto;min-width:0;font-size:23px;font-weight:800;color:var(--dark);
+  letter-spacing:-.03em;line-height:1.1;display:flex;flex-direction:column;white-space:nowrap}
+.logo em{color:var(--primary);font-style:normal;font-size:12px;
+  letter-spacing:.02em;font-weight:700;margin-top:1px}
+
+.menu{display:flex;gap:20px;list-style:none}
+.menu a{font-size:13.5px;font-weight:600;color:var(--dark);padding-bottom:4px;
+  border-bottom:2px solid transparent;white-space:nowrap}
+.menu a:hover{border-color:var(--primary)}
+.menu a.is-active{border-color:var(--primary);color:var(--secondary)}
+.nav .btn-wa{padding:12px 24px;font-size:14px}
+
+/* sanduíche */
+.burger{
+  display:none;width:44px;height:44px;flex:0 0 44px;padding:0;
+  border:1px solid var(--line);border-radius:10px;background:#fff;
+  flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  cursor:pointer;transition:background .2s;
+}
+.burger:hover{background:var(--light)}
+.burger:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.burger span{display:block;width:22px;height:2.5px;border-radius:3px;
+  background:var(--dark);transition:transform .28s,opacity .2s}
+.burger.is-x{background:var(--dark);border-color:var(--dark)}
+.burger.is-x span{background:#fff}
+.burger.is-x span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+.burger.is-x span:nth-child(2){opacity:0}
+.burger.is-x span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+
+/* ---------- 5. HERO E ESTATÍSTICAS ---------- */
+.hero{position:relative;min-height:600px;display:flex;align-items:flex-end;color:#fff}
+.hero-bg{position:absolute;inset:0}
+.hero-bg::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(8,32,58,.94),rgba(8,32,58,.72) 55%,rgba(8,32,58,.28))}
+.hero-inner{position:relative;z-index:2;padding:120px 0 90px;max-width:800px}
+.hero .eyebrow{color:var(--primary)}
+.hero h1{font-size:clamp(32px,5vw,56px);color:#fff;margin:18px 0 22px}
+.hero h1 span{color:var(--primary)}
+.hero p{font-size:18.5px;color:#D7E3F2;max-width:640px}
+.hero .wa-hint{color:#A8BFD8}
+.hero-actions{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+
+.stats{padding:0;border-bottom:1px solid var(--line)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{padding:42px 24px;border-left:1px solid var(--line)}
+.stat:first-child{border-left:0}
+.stat b{display:block;font-size:34px;color:var(--dark);letter-spacing:-.03em}
+.stat span{font-size:12.5px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.12em;font-weight:600}
+
+/* ---------- 6. BLOCOS DE CONTEÚDO ---------- */
+.split{display:grid;grid-template-columns:1.05fr 1fr;gap:70px;align-items:center}
+.split h2{font-size:clamp(26px,3.2vw,40px);margin:16px 0 22px}
+.split p{margin-bottom:16px}
+.figure{aspect-ratio:4/5;border-radius:6px;overflow:hidden}
+.head-center{max-width:720px;margin:0 auto 54px;text-align:center}
+.head-center h2{font-size:clamp(26px,3.2vw,40px);margin:16px 0 14px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px}
+.card{background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden;
+  transition:.3s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-5px);box-shadow:0 18px 44px rgba(8,32,58,.11)}
+.card-img{aspect-ratio:16/10;overflow:hidden}
+.card-body{padding:28px}
+.card h3{font-size:19.5px;margin-bottom:10px}
+.card p{font-size:15px;color:var(--muted);margin-bottom:16px}
+.card .more{font-size:13.5px;font-weight:700;color:var(--secondary)}
+
+.eq{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.eq>div{background:#fff;padding:34px 30px}
+.eq .num{font-size:12px;font-weight:800;color:var(--primary);letter-spacing:.15em}
+.eq h4{font-size:17.5px;margin:12px 0 8px}
+.eq p{font-size:14.5px;color:var(--muted)}
+
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:30px}
+.step{padding-top:26px;border-top:3px solid var(--primary)}
+.step b{font-size:12px;letter-spacing:.16em;color:var(--muted);font-weight:800}
+.step h4{font-size:18px;margin:10px 0 8px}
+.step p{font-size:14.5px;color:var(--muted)}
+
+.reviews{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px}
+.review{background:#fff;border:1px solid var(--line);border-radius:6px;padding:30px;transition:.3s}
+.review:hover{box-shadow:0 16px 40px rgba(8,32,58,.09)}
+.review-top{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.review-photo{width:64px;height:64px;border-radius:50%;object-fit:cover;
+  flex-shrink:0;border:2px solid var(--primary)}
+.review-top strong{display:block;color:var(--dark);font-size:15px}
+.review-top small{color:var(--muted);font-size:13px}
+.review .stars{color:var(--primary);letter-spacing:3px;margin-bottom:14px;font-size:14px}
+.review q{display:block;font-size:16px;color:var(--dark);font-style:italic}
+
+/* Tabela comparativa */
+.tab-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:34px}
+.tab-cmp{width:100%;min-width:560px;border-collapse:collapse;font-size:15px}
+.tab-cmp th,.tab-cmp td{padding:15px 18px;border-bottom:1px solid var(--line);text-align:left}
+.tab-cmp thead th{background:var(--dark);color:#fff;font-size:13.5px;
+  letter-spacing:.04em;text-transform:uppercase}
+.tab-cmp tbody th{font-weight:700;color:var(--dark)}
+.tab-cmp .sim{color:var(--wa2);font-weight:800}
+.tab-cmp .nao{color:#C0392B;font-weight:800}
+.tab-cmp tbody tr:hover{background:var(--light)}
+
+/* FAQ */
+.faq-item{border-bottom:1px solid var(--line)}
+.faq-q{width:100%;background:none;border:0;text-align:left;padding:24px 44px 24px 0;
+  font-size:17px;font-weight:700;color:var(--dark);cursor:pointer;position:relative;
+  font-family:var(--font);line-height:1.4}
+.faq-q:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.faq-q::after{content:"+";position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  font-size:24px;color:var(--primary);font-weight:600}
+.faq-q.is-open::after,
+.faq-q[aria-expanded="true"]::after{content:"–"}
+.faq-a{display:none;padding:0 40px 26px 0;font-size:15.5px;color:var(--text)}
+.faq-a.is-open,.faq-a.open{display:block}
+
+/* ---------- 7. NAVEGAÇÃO SEO ---------- */
+.nav-seo{margin-top:14px}
+.nav-seo-group{margin-bottom:52px}
+.nav-seo-group:last-child{margin-bottom:0}
+.nav-seo-head{display:flex;align-items:baseline;gap:14px;padding-bottom:16px;
+  margin-bottom:26px;border-bottom:2px solid var(--line);flex-wrap:wrap}
+.nav-seo-head h3{font-size:21px}
+.nav-seo-head span{font-size:14px;color:var(--muted)}
+.links-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.nav-item{position:relative;display:block;background:#fff;border:1px solid var(--line);
+  border-left:3px solid var(--primary);border-radius:6px;padding:22px 52px 22px 24px;transition:.28s}
+.nav-item:hover{border-left-color:var(--wa1);box-shadow:0 12px 30px rgba(8,32,58,.1);
+  transform:translateY(-3px)}
+.nav-item .tag{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--secondary);background:#EDF4FD;border-radius:3px;
+  padding:4px 9px;margin-bottom:11px}
+.nav-item strong{display:block;font-size:16px;color:var(--dark);font-weight:800;
+  letter-spacing:-.01em;margin-bottom:7px;line-height:1.3}
+.nav-item p{font-size:14px;color:var(--muted);line-height:1.6}
+.nav-item .go{position:absolute;right:20px;top:50%;transform:translateY(-50%);
+  font-size:17px;color:var(--muted);transition:.28s}
+.nav-item:hover .go{color:var(--wa2);transform:translateY(-50%) translateX(4px)}
+.nav-item.is-current{background:var(--light);border-left-color:var(--muted);
+  pointer-events:none;opacity:.62}
+.nav-item.is-current .tag{color:var(--muted);background:#E9EDF2}
+.nav-item.is-all{background:linear-gradient(150deg,#0B2A48,#08203A);
+  border-color:transparent;border-left-color:var(--primary)}
+.nav-item.is-all strong{color:#fff}
+.nav-item.is-all p{color:#9FB6CE}
+.nav-item.is-all .tag{color:var(--dark);background:var(--primary)}
+.nav-item.is-all .go{color:var(--primary)}
+
+/* ---------- 8. CTA, CONTEÚDO SEO E MAPA ---------- */
+.cta{background:var(--dark);color:#fff;text-align:center}
+.cta h2{color:#fff;font-size:clamp(25px,3.1vw,38px);margin-bottom:14px}
+.cta p{color:#B9CADD;max-width:580px;margin:0 auto 30px}
+.s-seo{max-width:920px}
+.s-seo h2{font-size:clamp(25px,3.1vw,36px);margin-bottom:22px}
+.s-seo h3{font-size:19.5px;margin:34px 0 10px}
+.s-seo p{margin-bottom:14px}
+.s-seo ul{margin:12px 0 16px 22px}
+.s-seo li{margin-bottom:7px}
+.s-seo a{color:var(--secondary);font-weight:600;border-bottom:1px solid rgba(12,99,200,.3)}
+
+.map-frame{position:relative;border:1px solid var(--line);border-radius:6px;
+  overflow:hidden;height:420px;margin-top:36px}
+.map-frame iframe{width:100%;height:100%;border:0;display:block}
+
+/* Estado preguiçoso: placeholder clicável antes de carregar o iframe */
+.map-frame.map-lazy{display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:10px;text-align:center;padding:24px;cursor:pointer;
+  background:linear-gradient(150deg,#EEF3F9,#E2EAF4);transition:background .25s}
+.map-frame.map-lazy:hover{background:linear-gradient(150deg,#E6EDF6,#D8E3F0)}
+.map-frame.map-lazy:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+.map-frame.map-lazy strong{font-size:17px;color:var(--dark)}
+.map-frame.map-lazy span{font-size:14px;color:var(--muted);max-width:340px}
+.map-frame.map-lazy .map-pin{font-size:30px;line-height:1}
+
+/* ---------- 9. RODAPÉ ---------- */
+footer.site{background:var(--dark);color:#A9BDD6;padding:76px 0 0;font-size:15px}
+.f-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:44px}
+footer.site h4{color:#fff;font-size:15px;margin-bottom:20px}
+footer.site ul{list-style:none}
+footer.site li{margin-bottom:10px}
+footer.site a:hover{color:var(--primary)}
+.f-wa{margin-top:26px}
+.copy{border-top:1px solid rgba(255,255,255,.1);margin-top:60px;padding:24px 0;
+  text-align:center;font-size:13px;color:#7D91A8}
+
+/* ---------- 10. BARRA MOBILE ---------- */
+#whatsapp-float{display:none}
+.wa-bar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:199;
+  padding:11px 14px calc(11px + env(safe-area-inset-bottom,0px));
+  background:rgba(255,255,255,.96);backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);box-shadow:0 -6px 22px rgba(8,32,58,.1)}
+
+/* Some com a barra enquanto o menu mobile está aberto */
+body.nav-open .wa-bar{opacity:0;pointer-events:none}
+
+/* ==========================================================================
+   11. CHAT MAGNUM
+   ========================================================================== */
+.chat-w{
+  position:fixed;z-index:198;right:24px;bottom:24px;width:340px;
+  background:#fff;border-radius:16px;box-shadow:0 22px 64px rgba(8,32,58,.26);
+  overflow:hidden;opacity:0;visibility:hidden;pointer-events:none;
+  transform:translateY(120%);
+  transition:transform .62s cubic-bezier(.22,1.12,.36,1),opacity .42s ease,visibility .62s;
+}
+.chat-w.is-on{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
+
+/* Não competir com o menu mobile aberto */
+body.nav-open .chat-w{opacity:0;pointer-events:none}
+
+.chat-head{position:relative;display:flex;align-items:center;gap:12px;
+  padding:15px 44px 15px 16px;background:linear-gradient(135deg,var(--wa2),var(--wa3))}
+.chat-avatar{position:relative;width:46px;height:46px;flex-shrink:0}
+.chat-avatar img,.chat-avatar .fallback{width:46px;height:46px;border-radius:50%;
+  object-fit:cover;border:2px solid rgba(255,255,255,.85)}
+.chat-avatar .fallback{background:var(--primary);color:var(--dark);display:flex;
+  align-items:center;justify-content:center;font-weight:800;font-size:17px}
+.chat-avatar::after{content:"";position:absolute;right:-1px;bottom:-1px;width:13px;height:13px;
+  border-radius:50%;background:#4ADE80;border:2px solid var(--wa3);
+  animation:chatOnline 2s ease-in-out infinite}
+.chat-id{min-width:0}
+.chat-id strong{display:block;color:#fff;font-size:14.5px;line-height:1.3;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-id span{display:block;color:#C4F0E4;font-size:12px;font-weight:600}
+.chat-x{position:absolute;top:11px;right:11px;width:28px;height:28px;border:0;border-radius:50%;
+  background:rgba(255,255,255,.18);color:#fff;font-size:18px;line-height:1;cursor:pointer;
+  transition:.25s;display:flex;align-items:center;justify-content:center;padding:0}
+.chat-x:hover{background:rgba(255,255,255,.34);transform:rotate(90deg)}
+.chat-x:focus-visible{outline:2px solid #fff;outline-offset:2px}
+
+.chat-body{padding:20px 16px 16px;background:#F7FAFC}
+
+/* Visibilidade controlada por CLASSE (o JS não usa mais style.display) */
+.chat-msg{
+  display:none;
+  background:#fff;border-radius:4px 14px 14px 14px;padding:14px 16px;font-size:14.5px;
+  line-height:1.6;color:var(--text);box-shadow:0 3px 12px rgba(8,32,58,.09);
+  margin-bottom:14px;opacity:0;transform:translateY(8px);
+  transition:opacity .4s ease,transform .4s ease;
+}
+.chat-msg.show{display:block;opacity:1;transform:translateY(0)}
+.chat-time{display:block;margin-top:7px;font-size:11px;color:var(--muted);
+  font-weight:600;text-align:right}
+
+.chat-typing{display:none;align-items:center;gap:5px;background:#fff;
+  border-radius:4px 14px 14px 14px;padding:15px 18px;
+  box-shadow:0 3px 12px rgba(8,32,58,.09);margin-bottom:14px}
+.chat-typing.is-on{display:inline-flex}
+.chat-typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);
+  animation:chatDot 1.3s ease-in-out infinite}
+.chat-typing i:nth-child(2){animation-delay:.18s}
+.chat-typing i:nth-child(3){animation-delay:.36s}
+
+.chat-body .btn-wa{display:none}
+.chat-body .btn-wa.show{display:inline-flex}
+.chat-w .btn-wa{width:100%;padding:15px 20px;font-size:15px;border-radius:10px;
+  animation:none;box-shadow:0 6px 18px rgba(18,140,126,.3)}
+.chat-w .btn-wa:hover{transform:translateY(-2px);animation:none}
+.chat-w .btn-wa .ico-wa{animation:none}
+.chat-foot{display:block;margin-top:11px;text-align:center;font-size:11.5px;
+  color:var(--muted);font-weight:600}
+
+@keyframes chatOnline{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.7)}70%{box-shadow:0 0 0 7px rgba(74,222,128,0)}}
+@keyframes chatDot{0%,60%,100%{transform:translateY(0);opacity:.45}30%{transform:translateY(-5px);opacity:1}}
+
+/* estado minimizado */
+.chat-w .chat-mini{display:none}
+.chat-w.is-min{width:auto;background:none;box-shadow:none;border:0;padding:0;overflow:visible}
+.chat-w.is-min .chat-full{display:none}
+.chat-w.is-min .chat-mini{
+  display:flex;align-items:center;gap:11px;
+  background:linear-gradient(135deg,var(--wa1),var(--wa2));
+  color:#fff;border:0;cursor:pointer;padding:9px 18px 9px 9px;border-radius:60px;
+  box-shadow:0 10px 30px rgba(18,140,126,.42);font-family:inherit;transition:.25s;
+}
+.chat-w.is-min .chat-mini:hover{transform:translateY(-3px);box-shadow:0 14px 38px rgba(37,211,102,.5)}
+.chat-w.is-min .chat-mini:focus-visible{outline:3px solid var(--primary);outline-offset:3px}
+.chat-avatar-mini{position:relative;width:40px;height:40px;flex:0 0 40px}
+.chat-avatar-mini img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.chat-w.is-min .chat-avatar-mini::after{width:12px;height:12px;border-color:var(--wa2)}
+.chat-mini-txt{display:flex;flex-direction:column;align-items:flex-start;
+  line-height:1.25;text-align:left}
+.chat-mini-txt b{display:flex;align-items:center;font-size:14.5px;font-weight:800}
+.chat-mini-txt i{font-size:11.5px;font-style:normal;opacity:.78}
+.chat-mini-txt i::before{content:'';display:inline-block;width:6px;height:6px;margin-right:5px;
+  border-radius:50%;background:#D6FFE6;vertical-align:middle}
+.ico-mini{width:15px;height:15px;fill:#fff;margin-right:6px;animation:none}
+
+/* ---------- 12. ACESSIBILIDADE ---------- */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .btn-wa,.ico-wa,.btn-wa::after,
+  .chat-avatar::after,.chat-typing i{animation:none!important}
+  .chat-w{transition:opacity .3s;transform:none}
+  .chat-w.is-on{transform:none}
+  .chat-msg{transition:none}
+  .menu{transition:none}
+  .card:hover,.nav-item:hover,.btn-wa:hover{transform:none}
+}
+
+/* ==========================================================================
+   13. MENU MOBILE
+   Camadas:  menu 126  >  overlay 125  >  header 120
+
+   A trava do fundo é feita SÓ por overflow, sem position:fixed no body:
+   deslocar o body arrasta o menu junto no celular e o JS não restaura
+   mais a posição de rolagem.
+   ========================================================================== */
+html.nav-lock,
+html.nav-lock body{
+  overflow:hidden !important;
+  height:100% !important;
+}
+
+/* touch-action fica apenas no overlay — no body ele mataria
+   a rolagem interna do próprio menu */
+.overlay{
+  position:fixed;inset:0;z-index:125;
+  background:rgba(4,14,26,.6);
+  opacity:0;visibility:hidden;cursor:pointer;touch-action:none;
+  transition:opacity .28s,visibility .28s;
+}
+.overlay.is-on,.overlay.active{opacity:1;visibility:visible}
+
+@media(max-width:980px){
+  .burger{display:flex}
+  .nav .nav-cta{display:none}
+
+  .menu{
+    position:fixed;top:0;bottom:0;right:0;z-index:126;
+    width:min(84vw,320px);max-width:100%;height:auto;
+    display:flex;flex-direction:column;align-items:stretch;
+    gap:0;margin:0;
+    padding:84px 22px calc(30px + env(safe-area-inset-bottom,0px));
+    background:linear-gradient(175deg,#0B2A4A,#08203A 62%);
+    box-shadow:-14px 0 40px rgba(0,0,0,.34);
+    transform:translateX(102%);
+    transition:transform .3s ease;
+    overflow-y:auto;overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
   }
-
-  /* Regras avaliadas de cima para baixo — a PRIMEIRA que casar vence.
-     Ao adicionar regras novas, coloque as mais específicas no topo.
-     re  = padrão buscado no H1
-     msg = fala da Magnum
-     cta = texto do botão dentro do chat
-     wa  = mensagem enviada no WhatsApp ({CIDADE_EM} vira " em Toledo") */
-  var INTENCOES = [
-    {
-      id: 'rural',
-      re: /fazenda|agroneg|produtor rural|propriedade rural|cooperativa/,
-      msg: 'Oi! 😊 Vi que você procura energia solar para o meio rural. Projetos assim costumam entrar em linhas de crédito com juros bem abaixo do mercado. Quer que eu verifique o seu caso?',
-      cta: 'Quero saber do crédito rural',
-      wa: 'Olá! Tenho interesse em energia solar para propriedade rural{CIDADE_EM}. Gostaria de saber sobre valores e financiamento.'
-    },
-    {
-      id: 'condominio',
-      re: /condom[ií]nio/,
-      msg: 'Oi! 😊 Energia solar em condomínio zera a conta das áreas comuns e alivia a taxa condominial. Preparo o estudo já formatado para apresentar em assembleia. Quer que eu faça?',
-      cta: 'Quero o estudo para assembleia',
-      wa: 'Olá! Preciso de um estudo de energia solar para condomínio{CIDADE_EM}, para apresentar em assembleia.'
-    },
-    {
-      id: 'financiamento',
-      re: /financiamento|financiar/,
-      msg: 'Oi! 😊 Na maioria dos casos a parcela do financiamento fica próxima — ou até abaixo — do que você já paga de luz hoje. Quer que eu simule com o valor da sua conta?',
-      cta: 'Simular a parcela',
-      wa: 'Olá! Quero simular o financiamento de um sistema de energia solar{CIDADE_EM}.'
-    },
-    {
-      id: 'preco_empresa',
-      re: /(pre[cç]o|custa|custo|or[cç]amento|cota[cç][aã]o|valor).*(empresa|empresarial|comercial|industri|com[eé]rcio)|(empresa|empresarial|comercial|industri|com[eé]rcio).*(pre[cç]o|custa|custo|or[cç]amento|cota[cç][aã]o|valor)/,
-      msg: 'Oi! 😊 Para empresa o cálculo muda: além da geração, avaliamos demanda contratada e modalidade tarifária. Me envia a fatura que eu fecho o valor exato?',
-      cta: 'Enviar fatura da empresa',
-      wa: 'Olá! Quero orçamento de energia solar para minha empresa{CIDADE_EM}. Vou enviar a fatura.'
-    },
-    {
-      id: 'segmento',
-      re: /supermercado|mercado|loja|restaurante|f[aá]brica|hotel|pousada|escrit[oó]rio|galp[aã]o|posto de combust|academia|cl[ií]nica|escola|igreja|ind[uú]stri|com[eé]rcio|comercial|empresa|empresarial/,
-      msg: 'Oi! 😊 Energia é um dos maiores custos fixos de um negócio — e o único que dá para eliminar de vez. Quer que eu calcule quanto sobraria da sua conta por mês?',
-      cta: 'Calcular economia do negócio',
-      wa: 'Olá! Tenho interesse em energia solar para meu negócio{CIDADE_EM}. Gostaria de um orçamento.'
-    },
-    {
-      id: 'preco',
-      re: /pre[cç]o|custa|custo|or[cç]amento|cota[cç][aã]o|valor/,
-      msg: 'Oi! 😊 Vi que você está pesquisando valores. Preço fechado sem ver a fatura é chute — mas com a sua conta em mãos eu fecho o número exato hoje mesmo. Quer que eu calcule?',
-      cta: 'Quero o valor exato',
-      wa: 'Olá! Quero saber o preço de um sistema de energia solar{CIDADE_EM}. Vou enviar minha conta de luz.'
-    },
-    {
-      id: 'instalacao',
-      re: /instala[cç][aã]o|instalar/,
-      msg: 'Oi! 😊 A instalação é feita com equipe própria, e a maioria das obras residenciais fica pronta em dois a três dias. Quer que eu veja o prazo para o seu telhado?',
-      cta: 'Ver prazo da instalação',
-      wa: 'Olá! Quero instalar energia solar{CIDADE_EM}. Gostaria de saber prazo e valores.'
-    },
-    {
-      id: 'equipamento',
-      re: /comprar|kit|placa|painel|pain[eé]is|invers/,
-      msg: 'Oi! 😊 Comprar kit avulso costuma sair mais caro no fim: sem projeto assinado, a Copel não homologa. Quer que eu monte o sistema completo, já com instalação inclusa?',
-      cta: 'Quero o sistema completo',
-      wa: 'Olá! Estou pesquisando placas e kit solar{CIDADE_EM}. Quero saber sobre o sistema completo com instalação.'
-    },
-    {
-      id: 'empresa_prestadora',
-      re: /empresa de energia|empresa para instalar|empresa instala|empresa fotovolt/,
-      msg: 'Oi! 😊 Somos de Cascavel, com equipe própria e engenheiro responsável registrado no CREA. Quer conhecer o processo e receber um orçamento sem compromisso?',
-      cta: 'Falar com a equipe',
-      wa: 'Olá! Quero conhecer o trabalho da M&A e receber um orçamento de energia solar{CIDADE_EM}.'
-    },
-    {
-      id: 'projeto',
-      re: /projeto/,
-      msg: 'Oi! 😊 Nosso projeto vem com ART no CREA e homologação completa na Copel — você não fala com a concessionária em nenhum momento. Quer que eu detalhe o seu?',
-      cta: 'Quero meu projeto',
-      wa: 'Olá! Preciso de projeto de energia solar{CIDADE_EM} com homologação na Copel.'
-    },
-    {
-      id: 'residencial',
-      re: /casa|resid[eê]ncia|residencial|domiciliar/,
-      msg: 'Oi! 😊 Em casa o retorno costuma vir entre o quarto e o sexto ano, e a conta cai para a taxa mínima. Quer que eu calcule com o seu consumo real?',
-      cta: 'Calcular minha economia',
-      wa: 'Olá! Quero energia solar na minha casa{CIDADE_EM}. Gostaria do cálculo de economia.'
-    }
-  ];
-
-  /* Descobre a cidade citada no H1 (prioriza o nome mais longo,
-     para "Santa Terezinha de Itaipu" não perder para "Itaipu") */
-  function detectarCidade(h1Normalizado) {
-    var achada = '';
-    CIDADES.forEach(function (cidade) {
-      if (h1Normalizado.indexOf(normalizar(cidade)) !== -1 && cidade.length > achada.length) {
-        achada = cidade;
-      }
-    });
-    return achada;
-  }
-
-  /* Resolve o contexto completo da página */
-  function resolverContexto() {
-    var h1 = document.querySelector('h1');
-    var h1n = normalizar(h1 ? h1.textContent : '');
-    var cidade = detectarCidade(h1n);
-    var sufixo = cidade ? ' em ' + cidade : '';
-    var regra = null;
-
-    for (var i = 0; i < INTENCOES.length; i++) {
-      if (INTENCOES[i].re.test(h1n)) {
-        regra = INTENCOES[i];
-        break;
-      }
-    }
-
-    /* Nenhuma regra casou (ex.: home) — usa o texto padrão */
-    if (!regra) {
-      return {
-        id: 'padrao',
-        cidade: cidade,
-        msg: CONFIG.chat.pergunta,
-        cta: CONFIG.chat.ctaPadrao,
-        wa: CONFIG.mensagemBase
-      };
-    }
-
-    return {
-      id: regra.id,
-      cidade: cidade,
-      msg: regra.msg.replace('{CIDADE}', cidade || 'sua região'),
-      cta: regra.cta,
-      wa: regra.wa.replace('{CIDADE_EM}', sufixo)
-    };
-  }
-
-  var CTX = resolverContexto();
-
-  /* Monta o link do WhatsApp com o contexto da página + do botão clicado */
-  function montarLinkWa(origem) {
-    var texto = CTX.wa || CONFIG.mensagemBase;
-    if (origem) texto += ' (Origem: ' + origem + ')';
-    return 'https://wa.me/' + CONFIG.telefone + '?text=' + encodeURIComponent(texto);
-  }
-
-  /* ======================================================================
-     3. BOTÕES DE WHATSAPP
-     ====================================================================== */
-  function iniciarBotoesWhatsApp() {
-    var botoes = document.querySelectorAll('.js-wa');
-
-    Array.prototype.forEach.call(botoes, function (btn) {
-      var origem = btn.getAttribute('data-wa-ctx') || '';
-
-      btn.setAttribute('href', montarLinkWa(origem));
-      btn.setAttribute('target', '_blank');
-      btn.setAttribute('rel', 'noopener noreferrer');
-
-      /* Injeta o ícone SVG antes do texto, se ainda não houver */
-      if (!btn.querySelector('.ico-wa')) {
-        btn.insertAdjacentHTML('afterbegin', CONFIG.iconeWa);
-      }
-    });
-  }
-
-  /* ======================================================================
-     4. MENU MOBILE
-
-     Três problemas resolvidos aqui:
-
-     a) O <header> tem backdrop-filter, que cria containing block e
-        aprisiona o position:fixed do menu. Solução: no mobile o menu
-        é reparentado para dentro do <body>, sem ancestral algum.
-
-     b) A rolagem do fundo é travada com position:fixed + top:-scrollY,
-        que funciona também no iOS (overflow:hidden não funciona lá).
-
-     c) Ao clicar num link de âncora, o fechamento NÃO restaura o scroll
-        anterior — quem manda é a âncora. Sem isso, o scrollY guardado
-        ficava errado e o menu abria fora da tela na próxima vez.
-     ====================================================================== */
-  function iniciarMenuMobile() {
-    var burger  = document.getElementById('burger');
-    var menu    = document.getElementById('menu');
-    var overlay = document.getElementById('overlay');
-    var header  = document.querySelector('header');
-
-    if (!burger || !menu) return;
-
-    /* Comentário-âncora: marca o lugar original do menu dentro do <nav>,
-       para devolvê-lo quando a tela voltar a ser desktop. */
-    var slot = document.createComment('menu-slot');
-    menu.parentNode.insertBefore(slot, menu);
-
-    var mq = window.matchMedia('(max-width:980px)');
-    var scrollY = 0;
-
-    function estaAberto() {
-      return menu.classList.contains('is-open');
-    }
-
-    function travarFundo() {
-      scrollY = window.scrollY || window.pageYOffset || 0;
-      /* Sem position:fixed no body: em celular ele arrasta o menu junto */
-      document.documentElement.classList.add('nav-lock');
-      document.body.classList.add('nav-open');
-    }
-
-    function soltarFundo() {
-      document.documentElement.classList.remove('nav-lock');
-      document.body.classList.remove('nav-open');
-    }
-
-        /* restaurar = false quando o fechamento vem de navegação por âncora */
-    /* O parâmetro "restaurar" ficou sem uso: como o body não é mais
-       deslocado, a página nunca perde a posição. Mantido na assinatura
-       para não quebrar as chamadas existentes. */
-    function fechar(restaurar) {
-      if (!estaAberto()) return;
-
-      menu.classList.remove('is-open');
-      if (overlay) overlay.classList.remove('is-on');
-      burger.classList.remove('is-x');
-      burger.setAttribute('aria-expanded', 'false');
-      burger.setAttribute('aria-label', 'Abrir menu');
-
-      soltarFundo();
-    }
-
-    /* restaurar = false quando o fechamento vem de navegação por âncora */
-    function fechar(restaurar) {
-      if (!estaAberto()) return;
-
-      menu.classList.remove('is-open');
-      if (overlay) overlay.classList.remove('is-on');
-      burger.classList.remove('is-x');
-      burger.setAttribute('aria-expanded', 'false');
-      burger.setAttribute('aria-label', 'Abrir menu');
-
-      soltarFundo();
-
-      if (restaurar !== false) window.scrollTo(0, scrollY);
-    }
-
-    /* Reparenta o menu conforme a largura da tela */
-    function sincronizar() {
-      if (mq.matches) {
-        if (menu.parentNode !== document.body) document.body.appendChild(menu);
-      } else {
-        fechar(false);
-        if (menu.parentNode === document.body) slot.parentNode.insertBefore(menu, slot);
-      }
-    }
-
-    /* ---- Botão sanduíche ---- */
-    burger.addEventListener('click', function (e) {
-      e.stopPropagation();
-      if (estaAberto()) fechar(); else abrir();
-    });
-
-    /* ---- Fundo escuro ---- */
-    if (overlay) {
-      overlay.addEventListener('click', function () { fechar(); });
-    }
-
-    /* ---- Clique em qualquer ponto fora do menu e fora do burger ---- */
-    document.addEventListener('click', function (e) {
-      if (!estaAberto()) return;
-      if (menu.contains(e.target)) return;
-      if (burger.contains(e.target)) return;
-      fechar();
-    });
-
-    /* ---- Tecla ESC ---- */
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') fechar();
-    });
-
-    /* ---- Links do menu ---- */
-    Array.prototype.forEach.call(menu.querySelectorAll('a'), function (link) {
-      link.addEventListener('click', function (e) {
-        var href = link.getAttribute('href') || '';
-
-        /* Âncora interna: o JS assume a rolagem, para não brigar
-           com o restore do fechar() */
-        if (href.charAt(0) === '#' && href.length > 1) {
-          var alvo = null;
-          try { alvo = document.querySelector(href); } catch (err) { alvo = null; }
-
-          if (alvo) {
-            e.preventDefault();
-            fechar(false);
-
-            /* Espera o body destravar antes de calcular a posição */
-            requestAnimationFrame(function () {
-              var off = header ? header.offsetHeight + 12 : 76;
-              var top = alvo.getBoundingClientRect().top + window.pageYOffset - off;
-              if (top < 0) top = 0;
-
-              try {
-                window.scrollTo({ top: top, behavior: 'smooth' });
-              } catch (err) {
-                window.scrollTo(0, top);
-              }
-
-              if (history.replaceState) history.replaceState(null, '', href);
-            });
-            return;
-          }
-        }
-
-        /* Link externo ou para outra página: só fecha, sem restaurar */
-        fechar(false);
-      });
-    });
-
-    /* ---- Reage à troca de mobile ↔ desktop ---- */
-    sincronizar();
-    if (mq.addEventListener) {
-      mq.addEventListener('change', sincronizar);
-    } else if (mq.addListener) {
-      mq.addListener(sincronizar);
-    }
-
-    /* Segurança: se a página for restaurada do cache do navegador
-       com o body travado, destrava. */
-    window.addEventListener('pageshow', function () {
-      if (!estaAberto()) soltarFundo();
-    });
-  }
-
-  /* ======================================================================
-     5. FAQ (ACORDEÃO)
-     ====================================================================== */
-  function iniciarFaq() {
-    var perguntas = document.querySelectorAll('.faq-q');
-    if (!perguntas.length) return;
-
-    Array.prototype.forEach.call(perguntas, function (btn) {
-      btn.addEventListener('click', function () {
-        var estavaAberta = btn.getAttribute('aria-expanded') === 'true';
-
-        /* Fecha todas as outras */
-        Array.prototype.forEach.call(perguntas, function (outra) {
-          if (outra !== btn) {
-            outra.setAttribute('aria-expanded', 'false');
-            outra.classList.remove('is-open');
-            var resp = outra.nextElementSibling;
-            if (resp) resp.classList.remove('is-open', 'open');
-          }
-        });
-
-        /* Alterna a clicada */
-        btn.setAttribute('aria-expanded', estavaAberta ? 'false' : 'true');
-        btn.classList.toggle('is-open', !estavaAberta);
-
-        var resposta = btn.nextElementSibling;
-        if (resposta) {
-          resposta.classList.toggle('is-open', !estavaAberta);
-          resposta.classList.toggle('open', !estavaAberta);
-        }
-      });
-    });
-  }
-
-  /* ======================================================================
-     6. PÁGINA ATUAL NO MENU
-     ====================================================================== */
-  function marcarPaginaAtual() {
-    var atual = window.location.pathname.split('/').pop() || 'index.html';
-
-    Array.prototype.forEach.call(document.querySelectorAll('.menu a'), function (link) {
-      var href = link.getAttribute('href') || '';
-      if (href.indexOf('#') === 0 || href.indexOf('tel:') === 0) return;
-
-      if (href.split('/').pop() === atual) {
-        link.classList.add('is-active');
-        link.setAttribute('aria-current', 'page');
-      }
-    });
-  }
-
-  /* ======================================================================
-     7. CHAT PROATIVO (EXPANDIR / MINIMIZAR)
-     ====================================================================== */
-  function iniciarChatProativo() {
-    var box = document.getElementById('chatProativo');
-    if (!box) return;
-
-    var mini   = box.querySelector('.chat-mini');
-    var btnMin = box.querySelector('.chat-x');
-    var typing = box.querySelector('.chat-typing');
-    var msg    = box.querySelector('.chat-msg');
-    var texto  = box.querySelector('.chat-texto');
-    var hora   = box.querySelector('.chat-time');
-    var cta    = box.querySelector('.chat-body .btn-wa');
-
-    var animado = false;
-
-    /* Fallback do avatar: se a imagem falhar, mostra as iniciais "AP" */
-    Array.prototype.forEach.call(box.querySelectorAll('.chat-avatar img'), function (img) {
-      img.addEventListener('error', function () {
-        var pai = img.parentNode;
-        pai.innerHTML = '<span class="fallback">AP</span>';
-        pai.classList.add('sem-foto');
-      });
-    });
-
-    function agora() {
-      var d = new Date();
-      return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
-    }
-
-    function animarMensagem() {
-      if (animado) return;
-      animado = true;
-
-      if (typing) typing.style.display = 'flex';
-      if (msg) msg.style.display = 'none';
-      if (cta) cta.style.display = 'none';
-
-      setTimeout(function () {
-        if (typing) typing.style.display = 'none';
-
-        if (texto) texto.textContent = CTX.msg;
-        if (hora) hora.textContent = agora();
-        if (msg) {
-          msg.style.display = 'block';
-          msg.classList.add('show');
-        }
-
-        /* Aplica o CTA contextual preservando o ícone SVG já injetado */
-        if (cta) {
-          var svg = cta.querySelector('.ico-wa');
-          cta.textContent = CTX.cta;
-          if (svg) cta.insertAdjacentElement('afterbegin', svg);
-          cta.style.display = 'inline-flex';
-        }
-      }, CONFIG.chat.duracaoDigitando);
-    }
-
-    function expandir() {
-      box.classList.remove('is-min');
-      box.classList.add('is-on');
-      try { sessionStorage.setItem('maChat', 'aberto'); } catch (e) {}
-      animarMensagem();
-    }
-
-    function minimizar() {
-      box.classList.add('is-on', 'is-min');
-      try { sessionStorage.setItem('maChat', 'min'); } catch (e) {}
-    }
-
-    if (mini)   mini.addEventListener('click', expandir);
-    if (btnMin) btnMin.addEventListener('click', minimizar);
-
-    /* Minimiza com ESC quando estiver expandido */
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && box.classList.contains('is-on') && !box.classList.contains('is-min')) {
-        minimizar();
-      }
-    });
-
-    /* Estado inicial conforme a sessão */
-    var estado = null;
-    try { estado = sessionStorage.getItem('maChat'); } catch (e) {}
-
-    if (estado === 'min') {
-      minimizar();
-    } else {
-      setTimeout(expandir, CONFIG.chat.atrasoAbertura);
-    }
-  }
-
-  /* ======================================================================
-     8. MAPA SOB DEMANDA (reduz ~800 KB de terceiros no carregamento)
-     ====================================================================== */
-  function iniciarMapaSobDemanda() {
-    var box = document.getElementById('mapBox');
-    if (!box) return;
-
-    var carregado = false;
-
-    function carregar() {
-      if (carregado) return;
-      carregado = true;
-
-      var frame = document.createElement('iframe');
-      frame.src = box.dataset.src;
-      frame.title = 'Localização da M&A Soluções Energéticas em Cascavel, Paraná';
-      frame.loading = 'lazy';
-      frame.referrerPolicy = 'no-referrer-when-downgrade';
-      frame.setAttribute('allowfullscreen', '');
-
-      box.innerHTML = '';
-      box.appendChild(frame);
-      box.classList.remove('map-lazy');
-      box.classList.add('is-loaded');
-      box.removeAttribute('role');
-      box.removeAttribute('tabindex');
-      box.removeAttribute('aria-label');
-    }
-
-    box.addEventListener('click', carregar);
-    box.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        carregar();
-      }
-    });
-  }
-
-  /* ======================================================================
-     9. INICIALIZAÇÃO
-     ====================================================================== */
-  function init() {
-    iniciarBotoesWhatsApp();
-    iniciarMenuMobile();
-    iniciarFaq();
-    marcarPaginaAtual();
-    iniciarChatProativo();
-    iniciarMapaSobDemanda();
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  /* Exposto apenas para depuração no console */
-  window.MA_CTX = CTX;
-
-})();
+  .menu.is-open,.menu.active{transform:translateX(0)}
+
+  .menu li{width:100%;border-bottom:1px solid rgba(255,255,255,.10)}
+  .menu li:last-child{border:0}
+  .menu a{display:block;width:100%;padding:16px 2px;font-size:15.5px;
+    color:#EAF2FA;border:0;transition:color .2s,padding-left .2s}
+  .menu a:hover,.menu a:focus-visible,.menu a.is-active{
+    color:var(--primary);padding-left:8px;border:0}
+
+  .menu .mobile-cta{border:0;margin-top:24px;padding:0}
+  .menu .mobile-cta a{padding:15px 16px;color:#fff;white-space:nowrap}
+}
+
+/* O menu é reparentado para o <body> no mobile: garante o ancoramento
+   nas duas bordas verticais mesmo fora do <nav> */
+body > .menu{
+  position:fixed;
+  top:0;bottom:0;right:0;
+  height:auto;
+}
+
+@media(min-width:981px){
+  .burger{display:none}
+  .overlay{display:none}
+  .menu .mobile-cta{display:none}
+  .menu,body > .menu{position:static;transform:none;width:auto;height:auto;
+    z-index:auto;flex-direction:row;background:none;box-shadow:none;
+    padding:0;overflow:visible;inset:auto}
+}
+
+/* ---------- 14. RESPONSIVO ---------- */
+@media(min-width:1400px){
+  .chat-w{width:360px}
+  .chat-msg{font-size:15px}
+}
+@media(max-width:1150px){
+  .menu{gap:15px}
+  .menu a{font-size:13px}
+}
+@media(max-width:1023px){
+  .chat-w{width:320px;right:20px;bottom:22px}
+}
+@media(max-width:980px){
+  .split{grid-template-columns:1fr;gap:40px}
+  .eq{grid-template-columns:repeat(2,1fr)}
+  .links-grid{grid-template-columns:repeat(2,1fr)}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .stat:nth-child(3){border-left:0}
+  .f-grid{grid-template-columns:repeat(2,1fr)}
+  .wa-strip .container{flex-direction:column;align-items:flex-start}
+  .logo{font-size:21px}
+  .logo em{font-size:11px}
+}
+@media(max-width:720px){
+  section{padding:66px 0}
+  .eq{grid-template-columns:1fr}
+  .eq>div{padding:28px 24px}
+  .links-grid{grid-template-columns:1fr}
+  .nav-item{padding:20px 46px 20px 22px}
+  .stats-grid{grid-template-columns:1fr}
+  .stat{border-left:0;border-top:1px solid var(--line)}
+  .f-grid{grid-template-columns:1fr}
+  .map-frame{height:300px}
+  .hero{min-height:520px}
+  .hero-actions{flex-direction:column;align-items:stretch}
+  .hero-actions .btn{text-align:center}
+  .btn-wa{width:100%;padding:16px 22px;font-size:15px}
+  .btn-wa.wa-lg{padding:18px 22px;font-size:16px}
+  .wa-bar{display:block}
+  body{padding-bottom:78px}
+  .tab-cmp{font-size:14px}
+  .tab-cmp th,.tab-cmp td{padding:12px 14px}
+
+  .chat-w{left:12px;right:12px;width:auto;border-radius:14px;
+    bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+  .chat-head{padding:13px 42px 13px 14px}
+  .chat-avatar,.chat-avatar img,.chat-avatar .fallback{width:42px;height:42px}
+  .chat-id strong{font-size:14px}
+  .chat-body{padding:17px 14px 14px}
+  .chat-msg{font-size:14px;padding:13px 15px}
+  .chat-w .btn-wa{padding:14px 18px;font-size:14.5px}
+}
+@media(max-width:560px){
+  .chat-w.is-min .chat-mini{padding:7px 15px 7px 7px}
+  .chat-mini-txt b{font-size:13px}
+}
+@media(max-width:400px){
+  .nav{gap:9px;padding:14px 16px}
+  .logo{font-size:18px}
+  .logo em{font-size:9.5px}
+  .burger{width:40px;height:40px;flex-basis:40px}
+  .chat-w{left:8px;right:8px}
+  .chat-msg{font-size:13.5px;line-height:1.55}
+  .chat-foot{font-size:11px}
+}
+@media(max-height:620px) and (max-width:1023px){
+  .chat-w{bottom:calc(84px + env(safe-area-inset-bottom,0px));max-height:70dvh;overflow-y:auto}
+  .chat-head{padding:10px 40px 10px 13px}
+  .chat-avatar,.chat-avatar img,.chat-avatar .fallback{width:36px;height:36px}
+  .chat-body{padding:14px 13px 12px}
+  .chat-msg{margin-bottom:11px;padding:11px 13px}
+  .chat-typing{padding:12px 15px;margin-bottom:11px}
+  .chat-w .btn-wa{padding:12px 16px;font-size:14px}
+  .chat-foot{margin-top:8px}
+}
