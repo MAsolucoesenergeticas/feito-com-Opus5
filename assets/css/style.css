@@ -1,12 +1,14 @@
 /* ==========================================================================
    M&A SOLUÇÕES ENERGÉTICAS · style.css
-   1. Variáveis e reset          8. CTA, SEO e mapa
-   2. Utilitários                9. Rodapé
-   3. Botões WhatsApp           10. Barra mobile
-   4. Topbar e header           11. Chat proativo
-   5. Hero e estatísticas       12. Acessibilidade
-   6. Blocos de conteúdo        13. Responsivo
-   7. Navegação SEO             14. Menu mobile (rolagem + fechar fora)
+   Sede: Medianeira · PR
+
+    1. Variáveis e reset          8. CTA, SEO e mapa
+    2. Utilitários                9. Rodapé
+    3. Botões WhatsApp           10. Barra mobile
+    4. Topbar e header           11. Chat Magnum
+    5. Hero e estatísticas       12. Acessibilidade
+    6. Blocos de conteúdo        13. Menu mobile
+    7. Navegação SEO             14. Responsivo
    ========================================================================== */
 
 /* ---------- 1. VARIÁVEIS E RESET ---------- */
@@ -22,12 +24,14 @@
   --wa2:#128C7E;
   --wa3:#0E6E5F;
   --font:'Inter','Segoe UI',Helvetica,Arial,sans-serif;
+  --h-header:76px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;overflow-x:hidden}
 body{font-family:var(--font);color:var(--text);line-height:1.75;font-size:16.5px;background:#fff}
 img{display:block;width:100%;height:100%;object-fit:cover}
 a{text-decoration:none;color:inherit}
+button{font-family:inherit}
 
 /* ---------- 2. UTILITÁRIOS ---------- */
 .container{max-width:1240px;margin:0 auto;padding:0 24px}
@@ -41,13 +45,20 @@ section{padding:100px 0}
 .bg-light{background:var(--light)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
+/* Sprite SVG oculto — substitui o style="display:none" inline */
+.svg-sprite{display:none}
+
+/* Compensa o header fixo ao pular para uma âncora */
+[id]{scroll-margin-top:calc(var(--h-header) + 12px)}
+
 /* ---------- 3. BOTÕES WHATSAPP ---------- */
 .btn-wa{
   position:relative;display:inline-flex;align-items:center;justify-content:center;gap:9px;
-  padding:17px 34px;border-radius:50px;
+  padding:17px 34px;border:0;border-radius:50px;
   background:linear-gradient(135deg,var(--wa1) 0%,var(--wa2) 55%,var(--wa3) 100%);
   background-size:200% 200%;
-  color:#fff;font-weight:800;font-size:15.5px;letter-spacing:-.01em;
+  color:#fff;font-family:inherit;font-weight:800;font-size:15.5px;letter-spacing:-.01em;
+  text-align:center;
   box-shadow:0 8px 26px rgba(18,140,126,.38);
   overflow:hidden;isolation:isolate;cursor:pointer;
   animation:waPulse 2.6s ease-in-out infinite;
@@ -107,7 +118,8 @@ section{padding:100px 0}
 .topbar a{color:var(--wa1);font-weight:700}
 
 header{position:sticky;top:0;z-index:120;background:rgba(255,255,255,.94);
-  backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line)}
 .nav{display:flex;align-items:center;justify-content:space-between;
   gap:14px;flex-wrap:nowrap;max-width:1240px;margin:0 auto;padding:18px 24px}
 
@@ -120,6 +132,7 @@ header{position:sticky;top:0;z-index:120;background:rgba(255,255,255,.94);
 .menu a{font-size:13.5px;font-weight:600;color:var(--dark);padding-bottom:4px;
   border-bottom:2px solid transparent;white-space:nowrap}
 .menu a:hover{border-color:var(--primary)}
+.menu a.is-active{border-color:var(--primary);color:var(--secondary)}
 .nav .btn-wa{padding:12px 24px;font-size:14px}
 
 /* sanduíche */
@@ -202,11 +215,23 @@ header{position:sticky;top:0;z-index:120;background:rgba(255,255,255,.94);
 .review .stars{color:var(--primary);letter-spacing:3px;margin-bottom:14px;font-size:14px}
 .review q{display:block;font-size:16px;color:var(--dark);font-style:italic}
 
+/* Tabela comparativa */
+.tab-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:34px}
+.tab-cmp{width:100%;min-width:560px;border-collapse:collapse;font-size:15px}
+.tab-cmp th,.tab-cmp td{padding:15px 18px;border-bottom:1px solid var(--line);text-align:left}
+.tab-cmp thead th{background:var(--dark);color:#fff;font-size:13.5px;
+  letter-spacing:.04em;text-transform:uppercase}
+.tab-cmp tbody th{font-weight:700;color:var(--dark)}
+.tab-cmp .sim{color:var(--wa2);font-weight:800}
+.tab-cmp .nao{color:#C0392B;font-weight:800}
+.tab-cmp tbody tr:hover{background:var(--light)}
+
 /* FAQ */
 .faq-item{border-bottom:1px solid var(--line)}
 .faq-q{width:100%;background:none;border:0;text-align:left;padding:24px 44px 24px 0;
   font-size:17px;font-weight:700;color:var(--dark);cursor:pointer;position:relative;
   font-family:var(--font);line-height:1.4}
+.faq-q:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
 .faq-q::after{content:"+";position:absolute;right:8px;top:50%;transform:translateY(-50%);
   font-size:24px;color:var(--primary);font-weight:600}
 .faq-q.is-open::after,
@@ -257,9 +282,20 @@ header{position:sticky;top:0;z-index:120;background:rgba(255,255,255,.94);
 .s-seo ul{margin:12px 0 16px 22px}
 .s-seo li{margin-bottom:7px}
 .s-seo a{color:var(--secondary);font-weight:600;border-bottom:1px solid rgba(12,99,200,.3)}
-.map-frame{border:1px solid var(--line);border-radius:6px;overflow:hidden;
-  height:420px;margin-top:36px}
+
+.map-frame{position:relative;border:1px solid var(--line);border-radius:6px;
+  overflow:hidden;height:420px;margin-top:36px}
 .map-frame iframe{width:100%;height:100%;border:0;display:block}
+
+/* Estado preguiçoso: placeholder clicável antes de carregar o iframe */
+.map-frame.map-lazy{display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:10px;text-align:center;padding:24px;cursor:pointer;
+  background:linear-gradient(150deg,#EEF3F9,#E2EAF4);transition:background .25s}
+.map-frame.map-lazy:hover{background:linear-gradient(150deg,#E6EDF6,#D8E3F0)}
+.map-frame.map-lazy:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+.map-frame.map-lazy strong{font-size:17px;color:var(--dark)}
+.map-frame.map-lazy span{font-size:14px;color:var(--muted);max-width:340px}
+.map-frame.map-lazy .map-pin{font-size:30px;line-height:1}
 
 /* ---------- 9. RODAPÉ ---------- */
 footer.site{background:var(--dark);color:#A9BDD6;padding:76px 0 0;font-size:15px}
@@ -274,12 +310,17 @@ footer.site a:hover{color:var(--primary)}
 
 /* ---------- 10. BARRA MOBILE ---------- */
 #whatsapp-float{display:none}
-.wa-bar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:199;padding:11px 14px;
+.wa-bar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:199;
+  padding:11px 14px calc(11px + env(safe-area-inset-bottom,0px));
   background:rgba(255,255,255,.96);backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
   border-top:1px solid var(--line);box-shadow:0 -6px 22px rgba(8,32,58,.1)}
 
+/* Some com a barra enquanto o menu mobile está aberto */
+body.nav-open .wa-bar{opacity:0;pointer-events:none}
+
 /* ==========================================================================
-   11. CHAT PROATIVO
+   11. CHAT MAGNUM
    ========================================================================== */
 .chat-w{
   position:fixed;z-index:198;right:24px;bottom:24px;width:340px;
@@ -289,6 +330,9 @@ footer.site a:hover{color:var(--primary)}
   transition:transform .62s cubic-bezier(.22,1.12,.36,1),opacity .42s ease,visibility .62s;
 }
 .chat-w.is-on{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
+
+/* Não competir com o menu mobile aberto */
+body.nav-open .chat-w{opacity:0;pointer-events:none}
 
 .chat-head{position:relative;display:flex;align-items:center;gap:12px;
   padding:15px 44px 15px 16px;background:linear-gradient(135deg,var(--wa2),var(--wa3))}
@@ -311,22 +355,34 @@ footer.site a:hover{color:var(--primary)}
 .chat-x:focus-visible{outline:2px solid #fff;outline-offset:2px}
 
 .chat-body{padding:20px 16px 16px;background:#F7FAFC}
-.chat-msg{background:#fff;border-radius:4px 14px 14px 14px;padding:14px 16px;font-size:14.5px;
+
+/* Visibilidade controlada por CLASSE (o JS não usa mais style.display) */
+.chat-msg{
+  display:none;
+  background:#fff;border-radius:4px 14px 14px 14px;padding:14px 16px;font-size:14.5px;
   line-height:1.6;color:var(--text);box-shadow:0 3px 12px rgba(8,32,58,.09);
-  margin-bottom:14px;opacity:0;transform:translateY(8px);transition:.4s}
-.chat-msg.show{opacity:1;transform:translateY(0)}
+  margin-bottom:14px;opacity:0;transform:translateY(8px);
+  transition:opacity .4s ease,transform .4s ease;
+}
+.chat-msg.show{display:block;opacity:1;transform:translateY(0)}
 .chat-time{display:block;margin-top:7px;font-size:11px;color:var(--muted);
   font-weight:600;text-align:right}
-.chat-typing{display:inline-flex;align-items:center;gap:5px;background:#fff;
+
+.chat-typing{display:none;align-items:center;gap:5px;background:#fff;
   border-radius:4px 14px 14px 14px;padding:15px 18px;
   box-shadow:0 3px 12px rgba(8,32,58,.09);margin-bottom:14px}
+.chat-typing.is-on{display:inline-flex}
 .chat-typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);
   animation:chatDot 1.3s ease-in-out infinite}
 .chat-typing i:nth-child(2){animation-delay:.18s}
 .chat-typing i:nth-child(3){animation-delay:.36s}
+
+.chat-body .btn-wa{display:none}
+.chat-body .btn-wa.show{display:inline-flex}
 .chat-w .btn-wa{width:100%;padding:15px 20px;font-size:15px;border-radius:10px;
   animation:none;box-shadow:0 6px 18px rgba(18,140,126,.3)}
 .chat-w .btn-wa:hover{transform:translateY(-2px);animation:none}
+.chat-w .btn-wa .ico-wa{animation:none}
 .chat-foot{display:block;margin-top:11px;text-align:center;font-size:11.5px;
   color:var(--muted);font-weight:600}
 
@@ -363,10 +419,83 @@ footer.site a:hover{color:var(--primary)}
   .chat-avatar::after,.chat-typing i{animation:none!important}
   .chat-w{transition:opacity .3s;transform:none}
   .chat-w.is-on{transform:none}
+  .chat-msg{transition:none}
+  .menu{transition:none}
+  .card:hover,.nav-item:hover,.btn-wa:hover{transform:none}
 }
 
-/* ---------- 13. RESPONSIVO ---------- */
-@media(max-width:1400px){}
+/* ==========================================================================
+   13. MENU MOBILE
+   Camadas:  menu 126  >  overlay 125  >  header 120
+
+   A trava do fundo é feita SÓ por overflow, sem position:fixed no body:
+   deslocar o body arrasta o menu junto no celular e o JS não restaura
+   mais a posição de rolagem.
+   ========================================================================== */
+html.nav-lock,
+html.nav-lock body{
+  overflow:hidden !important;
+  height:100% !important;
+}
+
+/* touch-action fica apenas no overlay — no body ele mataria
+   a rolagem interna do próprio menu */
+.overlay{
+  position:fixed;inset:0;z-index:125;
+  background:rgba(4,14,26,.6);
+  opacity:0;visibility:hidden;cursor:pointer;touch-action:none;
+  transition:opacity .28s,visibility .28s;
+}
+.overlay.is-on,.overlay.active{opacity:1;visibility:visible}
+
+@media(max-width:980px){
+  .burger{display:flex}
+  .nav .nav-cta{display:none}
+
+  .menu{
+    position:fixed;top:0;bottom:0;right:0;z-index:126;
+    width:min(84vw,320px);max-width:100%;height:auto;
+    display:flex;flex-direction:column;align-items:stretch;
+    gap:0;margin:0;
+    padding:84px 22px calc(30px + env(safe-area-inset-bottom,0px));
+    background:linear-gradient(175deg,#0B2A4A,#08203A 62%);
+    box-shadow:-14px 0 40px rgba(0,0,0,.34);
+    transform:translateX(102%);
+    transition:transform .3s ease;
+    overflow-y:auto;overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+  }
+  .menu.is-open,.menu.active{transform:translateX(0)}
+
+  .menu li{width:100%;border-bottom:1px solid rgba(255,255,255,.10)}
+  .menu li:last-child{border:0}
+  .menu a{display:block;width:100%;padding:16px 2px;font-size:15.5px;
+    color:#EAF2FA;border:0;transition:color .2s,padding-left .2s}
+  .menu a:hover,.menu a:focus-visible,.menu a.is-active{
+    color:var(--primary);padding-left:8px;border:0}
+
+  .menu .mobile-cta{border:0;margin-top:24px;padding:0}
+  .menu .mobile-cta a{padding:15px 16px;color:#fff;white-space:nowrap}
+}
+
+/* O menu é reparentado para o <body> no mobile: garante o ancoramento
+   nas duas bordas verticais mesmo fora do <nav> */
+body > .menu{
+  position:fixed;
+  top:0;bottom:0;right:0;
+  height:auto;
+}
+
+@media(min-width:981px){
+  .burger{display:none}
+  .overlay{display:none}
+  .menu .mobile-cta{display:none}
+  .menu,body > .menu{position:static;transform:none;width:auto;height:auto;
+    z-index:auto;flex-direction:row;background:none;box-shadow:none;
+    padding:0;overflow:visible;inset:auto}
+}
+
+/* ---------- 14. RESPONSIVO ---------- */
 @media(min-width:1400px){
   .chat-w{width:360px}
   .chat-msg{font-size:15px}
@@ -406,6 +535,8 @@ footer.site a:hover{color:var(--primary)}
   .btn-wa.wa-lg{padding:18px 22px;font-size:16px}
   .wa-bar{display:block}
   body{padding-bottom:78px}
+  .tab-cmp{font-size:14px}
+  .tab-cmp th,.tab-cmp td{padding:12px 14px}
 
   .chat-w{left:12px;right:12px;width:auto;border-radius:14px;
     bottom:calc(88px + env(safe-area-inset-bottom,0px))}
@@ -438,75 +569,4 @@ footer.site a:hover{color:var(--primary)}
   .chat-typing{padding:12px 15px;margin-bottom:11px}
   .chat-w .btn-wa{padding:12px 16px;font-size:14px}
   .chat-foot{margin-top:8px}
-}
-
-/* ==========================================================================
-   14. MENU MOBILE · rolagem travada e fechamento por clique fora
-   Camadas:  menu 126  >  overlay 125  >  header 120
-   ========================================================================== */
-
-/* Trava o fundo de verdade, inclusive no iOS.
-   O JS aplica top:-Ypx para a página não saltar. */
-body.nav-open{position:fixed;inset:0;width:100%;overflow:hidden}
-
-.overlay{
-  position:fixed;inset:0;z-index:125;
-  background:rgba(4,14,26,.6);
-  opacity:0;visibility:hidden;cursor:pointer;
-  transition:opacity .28s,visibility .28s;
-}
-.overlay.is-on,.overlay.active{opacity:1;visibility:visible}
-
-@media(max-width:980px){
-  .burger{display:flex}
-  .nav .nav-cta{display:none}
-
-  .menu{
-    position:fixed;top:0;right:0;z-index:126;
-    width:min(84vw,320px);max-width:100%;height:100dvh;
-    display:flex;flex-direction:column;align-items:stretch;
-    gap:0;margin:0;padding:84px 22px 30px;
-    background:linear-gradient(175deg,#0B2A4A,#08203A 62%);
-    box-shadow:-14px 0 40px rgba(0,0,0,.34);
-    transform:translateX(102%);
-    transition:transform .3s ease;
-    overflow-y:auto;overscroll-behavior:contain;
-  }
-  .menu.is-open,.menu.active{transform:translateX(0)}
-
-  .menu li{width:100%;border-bottom:1px solid rgba(255,255,255,.10)}
-  .menu li:last-child{border:0}
-  .menu a{display:block;width:100%;padding:16px 2px;font-size:15.5px;
-    color:#EAF2FA;border:0;transition:color .2s,padding-left .2s}
-  .menu a:hover,.menu a:focus-visible,.menu a.is-active{
-    color:var(--primary);padding-left:8px;border:0}
-
-  .menu .mobile-cta{border:0;margin-top:24px;padding:0}
-  .menu .mobile-cta a{padding:15px 16px;color:#fff;white-space:nowrap}
-}
-
-@media(min-width:981px){
-  .burger{display:none}
-  .overlay{display:none}
-  .menu .mobile-cta{display:none}
-  .menu{position:static;transform:none;width:auto;height:auto;z-index:auto;
-    flex-direction:row;background:none;box-shadow:none;padding:0;overflow:visible}
-}
-/* ==========================================================================
-   16. MENU MOBILE · travar fundo sem deslocar o body
-   ========================================================================== */
-html.nav-lock,
-html.nav-lock body{
-  overflow:hidden !important;
-  height:100% !important;
-  touch-action:none;
-}
-
-/* Ancora o menu nas duas bordas verticais da viewport */
-body > .menu{
-  position:fixed !important;
-  top:0 !important;
-  bottom:0 !important;
-  right:0 !important;
-  height:auto !important;
 }
