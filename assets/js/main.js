@@ -1,6 +1,5 @@
 /* ==========================================================================
    M&A SOLUÇÕES ENERGÉTICAS · main.js
-   Sede: Medianeira · PR
    Índice
    1. Configuração
    2. Contexto da página (intenção + cidade)
@@ -8,7 +7,7 @@
    4. Menu mobile
    5. FAQ (acordeão)
    6. Página atual no menu
-   7. Chat proativo Magnum (expandir / minimizar)
+   7. Chat proativo (expandir / minimizar)
    8. Mapa sob demanda
    9. Inicialização
    ========================================================================== */
@@ -33,27 +32,30 @@
 
   /* ======================================================================
      2. CONTEXTO DA PÁGINA (INTENÇÃO + CIDADE)
-
-     A intenção é resolvida em duas camadas:
-       1ª) <body data-ctx="rural">  → override explícito da página
-       2ª) leitura do <h1>          → detecção automática
-     Isso permite que as páginas-satélite forcem o roteiro sem depender
-     da redação do título.
      ====================================================================== */
   var CIDADES = [
-    'Assis Chateaubriand', 'Barracão', 'Bela Vista da Caroba', 'Boa Vista da Aparecida',
-    'Bom Jesus do Sul', 'Braganey', 'Cafelândia', 'Cambé', 'Campo Mourão', 'Capanema',
-    'Capitão Leônidas Marques', 'Cascavel', 'Catanduvas', 'Céu Azul', 'Chopinzinho',
-    'Cianorte', 'Clevelândia', 'Corbélia', "Diamante d'Oeste", 'Entre Rios do Oeste',
-    'Foz do Iguaçu', 'Francisco Alves', 'Francisco Beltrão', 'General Carneiro',
-    'Goioerê', 'Goioxim', "Itapejara d'Oeste", 'Lindoeste', 'Londrina', 'Mamborê',
-    'Mandaguaçu', 'Mandaguari', 'Marechal Cândido Rondon', 'Marialva', 'Mariluz',
-    'Maringá', 'Marmeleiro', 'Matelândia', 'Medianeira', 'Missal', 'Moreira Sales',
-    'Nova Santa Rosa', 'Palotina', 'Pato Bragado', 'Pato Branco', 'Pérola', 'Planalto',
-    'Ponta Grossa', 'Ramilândia', 'Realeza', 'Santa Helena', 'Santa Izabel do Oeste',
-    'Santa Tereza do Oeste', 'Santa Terezinha de Itaipu', 'São Miguel do Iguaçu',
-    'Sarandi', 'Serranópolis do Iguaçu', 'Terra Roxa', 'Toledo', 'Ubiratã', 'Umuarama',
-    'Vera Cruz do Oeste'
+    /* --- 15 cidades do plano de páginas --- */
+    'Medianeira', 'Missal', 'São Miguel do Iguaçu', 'Foz do Iguaçu', 'Santa Helena',
+    'Marechal Cândido Rondon', 'Entre Rios do Oeste', 'Cascavel', 'Toledo',
+    'Nova Santa Rosa', 'Palotina', 'Assis Chateaubriand', 'Corbélia',
+    'Cafelândia', 'Braganey',
+
+    /* --- Vizinhas e demais atendidas --- */
+    'Anahy', 'Barracão', 'Bela Vista da Caroba', 'Boa Vista da Aparecida',
+    'Bom Jesus do Sul', 'Cambé', 'Campo Bonito', 'Campo Mourão', 'Capanema',
+    'Capitão Leônidas Marques', 'Catanduvas', 'Céu Azul', 'Chopinzinho',
+    'Cianorte', 'Clevelândia', "Diamante d'Oeste", 'Formosa do Oeste',
+    'Francisco Alves', 'Francisco Beltrão', 'General Carneiro', 'Goioerê',
+    'Goioxim', 'Guaíra', 'Iguatu', 'Iracema do Oeste', 'Itaipulândia',
+    "Itapejara d'Oeste", 'Jesuítas', 'Lindoeste', 'Londrina', 'Mamborê',
+    'Mandaguaçu', 'Mandaguari', 'Marialva', 'Maripá', 'Mariluz', 'Maringá',
+    'Marmeleiro', 'Matelândia', 'Moreira Sales', 'Nova Aurora',
+    'Ouro Verde do Oeste', 'Pato Bragado', 'Pato Branco', 'Pérola', 'Planalto',
+    'Ponta Grossa', 'Quatro Pontes', 'Ramilândia', 'Realeza',
+    'Santa Izabel do Oeste', 'Santa Lúcia', 'Santa Tereza do Oeste',
+    'Santa Terezinha de Itaipu', 'São José das Palmeiras', 'São Pedro do Iguaçu',
+    'Sarandi', 'Serranópolis do Iguaçu', 'Terra Roxa', 'Três Barras do Paraná',
+    'Tupãssi', 'Ubiratã', 'Umuarama', 'Vera Cruz do Oeste'
   ];
 
   /* Remove acentos e baixa a caixa, para comparação segura */
@@ -65,13 +67,7 @@
       .replace(/[\u0300-\u036f]/g, '');
   }
 
-  /* Regras avaliadas de cima para baixo — a PRIMEIRA que casar vence.
-     Ao adicionar regras novas, coloque as mais específicas no topo.
-     id  = valor aceito em data-ctx
-     re  = padrão buscado no H1
-     msg = fala do Magnum
-     cta = texto do botão dentro do chat
-     wa  = mensagem enviada no WhatsApp ({CIDADE_EM} vira " em Toledo") */
+  /* Regras avaliadas de cima para baixo — a PRIMEIRA que casar vence. */
   var INTENCOES = [
     {
       id: 'rural',
@@ -89,7 +85,7 @@
     },
     {
       id: 'financiamento',
-      re: /financiamento|financiar/,
+      re: /financiamento|financiar|parcel/,
       msg: 'Oi! 😊 Na maioria dos casos a parcela do financiamento fica próxima — ou até abaixo — do que você já paga de luz hoje. Quer que eu simule com o valor da sua conta?',
       cta: 'Simular a parcela',
       wa: 'Olá! Quero simular o financiamento de um sistema de energia solar{CIDADE_EM}.'
@@ -137,15 +133,8 @@
       wa: 'Olá! Quero conhecer o trabalho da M&A e receber um orçamento de energia solar{CIDADE_EM}.'
     },
     {
-      id: 'manutencao',
-      re: /manuten[cç][aã]o|limpeza|termografia|n[aã]o est[aá] gerando|queda de gera/,
-      msg: 'Oi! 😊 Atendemos manutenção inclusive em sistema instalado por outra empresa: limpeza técnica, termografia e diagnóstico de queda de geração. Quer que eu veja o seu caso?',
-      cta: 'Quero diagnóstico do sistema',
-      wa: 'Olá! Preciso de manutenção no meu sistema de energia solar{CIDADE_EM}.'
-    },
-    {
       id: 'projeto',
-      re: /projeto|homologa|art|crea/,
+      re: /projeto|homologa/,
       msg: 'Oi! 😊 Nosso projeto vem com ART no CREA e homologação completa na Copel — você não fala com a concessionária em nenhum momento. Quer que eu detalhe o seu?',
       cta: 'Quero meu projeto',
       wa: 'Olá! Preciso de projeto de energia solar{CIDADE_EM} com homologação na Copel.'
@@ -159,17 +148,7 @@
     }
   ];
 
-  /* Localiza uma intenção pelo id */
-  function intencaoPorId(id) {
-    if (!id) return null;
-    for (var i = 0; i < INTENCOES.length; i++) {
-      if (INTENCOES[i].id === id) return INTENCOES[i];
-    }
-    return null;
-  }
-
-  /* Descobre a cidade citada no H1 (prioriza o nome mais longo,
-     para "Santa Terezinha de Itaipu" não perder para "Itaipu") */
+  /* Descobre a cidade citada no H1 (prioriza o nome mais longo) */
   function detectarCidade(h1Normalizado) {
     var achada = '';
     CIDADES.forEach(function (cidade) {
@@ -182,23 +161,16 @@
 
   /* Resolve o contexto completo da página */
   function resolverContexto() {
-    var h1  = document.querySelector('h1');
+    var h1 = document.querySelector('h1');
     var h1n = normalizar(h1 ? h1.textContent : '');
-
-    /* A cidade também pode vir explícita em <body data-cidade="Toledo"> */
-    var cidade = (document.body && document.body.getAttribute('data-cidade')) || detectarCidade(h1n);
+    var cidade = detectarCidade(h1n);
     var sufixo = cidade ? ' em ' + cidade : '';
+    var regra = null;
 
-    /* 1ª camada: override por data-ctx no <body> */
-    var regra = intencaoPorId(document.body && document.body.getAttribute('data-ctx'));
-
-    /* 2ª camada: detecção pelo H1 */
-    if (!regra) {
-      for (var i = 0; i < INTENCOES.length; i++) {
-        if (INTENCOES[i].re.test(h1n)) {
-          regra = INTENCOES[i];
-          break;
-        }
+    for (var i = 0; i < INTENCOES.length; i++) {
+      if (INTENCOES[i].re.test(h1n)) {
+        regra = INTENCOES[i];
+        break;
       }
     }
 
@@ -224,50 +196,26 @@
 
   var CTX = resolverContexto();
 
-  /* Monta o link do WhatsApp.
-     origem = data-wa-ctx (rastreio de qual botão foi clicado)
-     ctxId  = data-ctx    (força outra intenção só naquele botão) */
-  function montarLinkWa(origem, ctxId) {
+  /* Monta o link do WhatsApp com o contexto da página + do botão clicado */
+  function montarLinkWa(origem) {
     var texto = CTX.wa || CONFIG.mensagemBase;
-    var forcada = intencaoPorId(ctxId);
-
-    if (forcada) {
-      texto = forcada.wa.replace('{CIDADE_EM}', CTX.cidade ? ' em ' + CTX.cidade : '');
-    }
-
     if (origem) texto += ' (Origem: ' + origem + ')';
     return 'https://wa.me/' + CONFIG.telefone + '?text=' + encodeURIComponent(texto);
   }
 
   /* ======================================================================
      3. BOTÕES DE WHATSAPP
-     Funciona em <a> e em <button> — os chips do Magnum são <button>.
      ====================================================================== */
   function iniciarBotoesWhatsApp() {
     var botoes = document.querySelectorAll('.js-wa');
 
     Array.prototype.forEach.call(botoes, function (btn) {
       var origem = btn.getAttribute('data-wa-ctx') || '';
-      var ctxId  = btn.getAttribute('data-ctx') || '';
 
-      if (btn.tagName === 'A') {
-        btn.setAttribute('href', montarLinkWa(origem, ctxId));
-        btn.setAttribute('target', '_blank');
-        btn.setAttribute('rel', 'noopener noreferrer');
-      } else {
-        btn.setAttribute('type', 'button');
-        btn.addEventListener('click', function () {
-          /* Lê os atributos no clique: permite que o chip seja alterado
-             dinamicamente pelo roteiro do chat */
-          var url = montarLinkWa(
-            btn.getAttribute('data-wa-ctx') || '',
-            btn.getAttribute('data-ctx') || ''
-          );
-          window.open(url, '_blank', 'noopener');
-        });
-      }
+      btn.setAttribute('href', montarLinkWa(origem));
+      btn.setAttribute('target', '_blank');
+      btn.setAttribute('rel', 'noopener noreferrer');
 
-      /* Injeta o ícone SVG antes do texto, se ainda não houver */
       if (!btn.querySelector('.ico-wa')) {
         btn.insertAdjacentHTML('afterbegin', CONFIG.iconeWa);
       }
@@ -278,15 +226,10 @@
      4. MENU MOBILE
 
      a) O <header> tem backdrop-filter, que cria containing block e
-        aprisiona o position:fixed do menu. Solução: no mobile o menu
-        é reparentado para dentro do <body>, sem ancestral algum.
-
-     b) A rolagem do fundo é travada por classe no <html> e no <body>
-        (.nav-lock / .nav-open), sem deslocar o body — em celular o
-        position:fixed no body arrasta o menu junto.
-
-     c) Como o body não é deslocado, a posição de rolagem nunca se perde:
-        não há restauração manual de scroll no fechamento.
+        aprisiona o position:fixed do menu. No mobile o menu é
+        reparentado para dentro do <body>, sem ancestral algum.
+     b) A rolagem do fundo é travada via classe .nav-lock no <html>,
+        sem deslocar o body — evita salto de scroll no iOS.
      ====================================================================== */
   function iniciarMenuMobile() {
     var burger  = document.getElementById('burger');
@@ -296,8 +239,8 @@
 
     if (!burger || !menu) return;
 
-    /* Comentário-âncora: marca o lugar original do menu dentro do <nav>,
-       para devolvê-lo quando a tela voltar a ser desktop. */
+    /* Marca o lugar original do menu dentro do <nav>, para devolvê-lo
+       quando a tela voltar a ser desktop. */
     var slot = document.createComment('menu-slot');
     menu.parentNode.insertBefore(slot, menu);
 
@@ -320,11 +263,6 @@
     function abrir() {
       if (estaAberto()) return;
 
-      /* Garante que o menu esteja fora do header antes de exibir */
-      if (mq.matches && menu.parentNode !== document.body) {
-        document.body.appendChild(menu);
-      }
-
       menu.classList.add('is-open');
       if (overlay) overlay.classList.add('is-on');
       burger.classList.add('is-x');
@@ -333,13 +271,16 @@
 
       travarFundo();
 
+      /* Foco no primeiro link, para navegação por teclado */
       var primeiro = menu.querySelector('a');
       if (primeiro) {
-        try { primeiro.focus({ preventScroll: true }); } catch (e) { primeiro.focus(); }
+        try { primeiro.focus({ preventScroll: true }); } catch (e) {}
       }
     }
 
-    function fechar() {
+    /* O parâmetro "restaurar" é mantido apenas por compatibilidade:
+       como o body não é mais deslocado, a posição nunca é perdida. */
+    function fechar(restaurar) {
       if (!estaAberto()) return;
 
       menu.classList.remove('is-open');
@@ -356,7 +297,7 @@
       if (mq.matches) {
         if (menu.parentNode !== document.body) document.body.appendChild(menu);
       } else {
-        fechar();
+        fechar(false);
         if (menu.parentNode === document.body) slot.parentNode.insertBefore(menu, slot);
       }
     }
@@ -369,7 +310,7 @@
 
     /* ---- Fundo escuro ---- */
     if (overlay) {
-      overlay.addEventListener('click', fechar);
+      overlay.addEventListener('click', function () { fechar(); });
     }
 
     /* ---- Clique em qualquer ponto fora do menu e fora do burger ---- */
@@ -393,17 +334,16 @@
       link.addEventListener('click', function (e) {
         var href = link.getAttribute('href') || '';
 
-        /* Âncora interna: o JS assume a rolagem, para compensar
-           a altura do header fixo */
+        /* Âncora interna: o JS assume a rolagem */
         if (href.charAt(0) === '#' && href.length > 1) {
           var alvo = null;
           try { alvo = document.querySelector(href); } catch (err) { alvo = null; }
 
           if (alvo) {
             e.preventDefault();
-            fechar();
+            fechar(false);
 
-            /* Espera o layout destravar antes de calcular a posição */
+            /* Espera o destravamento antes de calcular a posição */
             requestAnimationFrame(function () {
               var off = header ? header.offsetHeight + 12 : 76;
               var top = alvo.getBoundingClientRect().top + window.pageYOffset - off;
@@ -422,11 +362,11 @@
         }
 
         /* Link externo ou para outra página: só fecha */
-        fechar();
+        fechar(false);
       });
     });
 
-    /* ---- Reage à troca de mobile <-> desktop ---- */
+    /* ---- Reage à troca de mobile ↔ desktop ---- */
     sincronizar();
     if (mq.addEventListener) {
       mq.addEventListener('change', sincronizar);
@@ -434,8 +374,7 @@
       mq.addListener(sincronizar);
     }
 
-    /* Segurança: se a página voltar do cache do navegador
-       com o layout travado, destrava. */
+    /* Segurança: se a página voltar do cache do navegador travada, destrava. */
     window.addEventListener('pageshow', function () {
       if (!estaAberto()) soltarFundo();
     });
@@ -493,11 +432,10 @@
   }
 
   /* ======================================================================
-     7. CHAT PROATIVO MAGNUM (EXPANDIR / MINIMIZAR)
-     Aceita id="magnum" e mantém compatibilidade com id="chatProativo".
+     7. CHAT PROATIVO (EXPANDIR / MINIMIZAR)
      ====================================================================== */
   function iniciarChatProativo() {
-    var box = document.getElementById('magnum') || document.getElementById('chatProativo');
+    var box = document.getElementById('chatProativo');
     if (!box) return;
 
     var mini   = box.querySelector('.chat-mini');
@@ -509,13 +447,12 @@
     var cta    = box.querySelector('.chat-body .btn-wa');
 
     var animado = false;
-    var timerAbertura = null;
 
-    /* Fallback do avatar: se a imagem falhar, mostra a inicial "M" */
+    /* Fallback do avatar: se a imagem falhar, mostra as iniciais "MA" */
     Array.prototype.forEach.call(box.querySelectorAll('.chat-avatar img'), function (img) {
       img.addEventListener('error', function () {
         var pai = img.parentNode;
-        pai.innerHTML = '<span class="fallback">M</span>';
+        pai.innerHTML = '<span class="fallback">MA</span>';
         pai.classList.add('sem-foto');
       });
     });
@@ -529,23 +466,26 @@
       if (animado) return;
       animado = true;
 
-      if (typing) typing.classList.add('is-on');
-      if (msg) msg.classList.remove('show');
-      if (cta) cta.classList.remove('show');
+      if (typing) typing.style.display = 'flex';
+      if (msg) msg.style.display = 'none';
+      if (cta) cta.style.display = 'none';
 
       setTimeout(function () {
-        if (typing) typing.classList.remove('is-on');
+        if (typing) typing.style.display = 'none';
 
         if (texto) texto.textContent = CTX.msg;
         if (hora) hora.textContent = agora();
-        if (msg) msg.classList.add('show');
+        if (msg) {
+          msg.style.display = 'block';
+          msg.classList.add('show');
+        }
 
         /* Aplica o CTA contextual preservando o ícone SVG já injetado */
         if (cta) {
           var svg = cta.querySelector('.ico-wa');
           cta.textContent = CTX.cta;
           if (svg) cta.insertAdjacentElement('afterbegin', svg);
-          cta.classList.add('show');
+          cta.style.display = 'inline-flex';
         }
       }, CONFIG.chat.duracaoDigitando);
     }
@@ -558,7 +498,6 @@
     }
 
     function minimizar() {
-      if (timerAbertura) { clearTimeout(timerAbertura); timerAbertura = null; }
       box.classList.add('is-on', 'is-min');
       try { sessionStorage.setItem('maChat', 'min'); } catch (e) {}
     }
@@ -566,16 +505,9 @@
     if (mini)   mini.addEventListener('click', expandir);
     if (btnMin) btnMin.addEventListener('click', minimizar);
 
-    /* Minimiza com ESC quando estiver expandido.
-       Só age se o menu mobile NÃO estiver aberto, para não competir
-       pela mesma tecla. */
+    /* Minimiza com ESC quando estiver expandido */
     document.addEventListener('keydown', function (e) {
-      if (e.key !== 'Escape') return;
-
-      var menu = document.getElementById('menu');
-      if (menu && menu.classList.contains('is-open')) return;
-
-      if (box.classList.contains('is-on') && !box.classList.contains('is-min')) {
+      if (e.key === 'Escape' && box.classList.contains('is-on') && !box.classList.contains('is-min')) {
         minimizar();
       }
     });
@@ -587,12 +519,12 @@
     if (estado === 'min') {
       minimizar();
     } else {
-      timerAbertura = setTimeout(expandir, CONFIG.chat.atrasoAbertura);
+      setTimeout(expandir, CONFIG.chat.atrasoAbertura);
     }
   }
 
   /* ======================================================================
-     8. MAPA SOB DEMANDA (evita ~800 KB de terceiros no carregamento)
+     8. MAPA SOB DEMANDA
      ====================================================================== */
   function iniciarMapaSobDemanda() {
     var box = document.getElementById('mapBox');
@@ -605,9 +537,8 @@
       carregado = true;
 
       var frame = document.createElement('iframe');
-      frame.src = box.getAttribute('data-src');
-      frame.title = box.getAttribute('data-title') ||
-                    'Localização da M&A Soluções Energéticas em Medianeira, Paraná';
+      frame.src = box.dataset.src;
+      frame.title = box.dataset.title || 'Mapa de localização da M&A Soluções Energéticas';
       frame.loading = 'lazy';
       frame.referrerPolicy = 'no-referrer-when-downgrade';
       frame.setAttribute('allowfullscreen', '');
