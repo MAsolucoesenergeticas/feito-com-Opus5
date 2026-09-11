@@ -72,9 +72,9 @@
         {
       id: 'manutencao',
       re: /manuten[cç][aã]o|limpeza|termografia|revis[aã]o|queda de gera|n[aã]o est[aá] gerando|assist[eê]ncia t[eé]cnica/,
-      msg: 'Oi! 😊 Vi que você procura manutenção de energia solar. Se a geração caiu, na maioria dos casos é sujidade ou string aberta — e isso se recupera. Quer que eu avalie o seu caso?',
-      cta: 'Quero avaliar meu sistema',
-      wa: 'Olá! Preciso de manutenção do meu sistema de energia solar{CIDADE_EM}. Vou enviar o print do monitoramento.'
+      msg: 'Oi! 😊 Vi que você procura manutenção do seu sistema solar. Fazemos limpeza técnica, termografia e laudo — inclusive em sistemas instalados por outra empresa. Quer que eu avalie o seu caso?',
+      cta: 'Sim, quero avaliar',
+      wa: 'Olá! Preciso de manutenção no meu sistema de energia solar{CIDADE_EM}. Vou enviar as informações do sistema.'
     },
 
     {
