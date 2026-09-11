@@ -9,6 +9,7 @@
     5. Hero e estatísticas       12. Acessibilidade
     6. Blocos de conteúdo        13. Menu mobile
     7. Navegação SEO             14. Responsivo
+   15. Breadcrumb  ·  16. Interlinking  ·  17. Performance
    ========================================================================== */
 
 /* ---------- 1. VARIÁVEIS E RESET ---------- */
@@ -35,7 +36,9 @@ button{font-family:inherit}
 
 /* ---------- 2. UTILITÁRIOS ---------- */
 .container{max-width:1240px;margin:0 auto;padding:0 24px}
+.container--narrow{max-width:920px}
 .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--secondary)}
+.eyebrow--primary{color:var(--primary)}
 h1,h2,h3,h4{color:var(--dark);line-height:1.16;font-weight:800;letter-spacing:-.02em}
 section{padding:100px 0}
 .lead{font-size:19px;color:var(--muted)}
@@ -48,8 +51,9 @@ section{padding:100px 0}
 /* Sprite SVG oculto — substitui o style="display:none" inline */
 .svg-sprite{display:none}
 
-/* Compensa o header fixo ao pular para uma âncora */
-[id]{scroll-margin-top:calc(var(--h-header) + 12px)}
+/* Compensa o header fixo ao pular para uma âncora.
+   Restrito a section/div: aplicar em [id] atingia o <html> e o menu. */
+section[id],div[id],article[id]{scroll-margin-top:calc(var(--h-header) + 12px)}
 
 /* ---------- 3. BOTÕES WHATSAPP ---------- */
 .btn-wa{
@@ -177,6 +181,7 @@ header{position:sticky;top:0;z-index:120;background:rgba(255,255,255,.94);
 .split{display:grid;grid-template-columns:1.05fr 1fr;gap:70px;align-items:center}
 .split h2{font-size:clamp(26px,3.2vw,40px);margin:16px 0 22px}
 .split p{margin-bottom:16px}
+.split p a{color:var(--secondary);font-weight:600;border-bottom:1px solid rgba(12,99,200,.3)}
 .figure{aspect-ratio:4/5;border-radius:6px;overflow:hidden}
 .head-center{max-width:720px;margin:0 auto 54px;text-align:center}
 .head-center h2{font-size:clamp(26px,3.2vw,40px);margin:16px 0 14px}
@@ -188,8 +193,16 @@ header{position:sticky;top:0;z-index:120;background:rgba(255,255,255,.94);
 .card-img{aspect-ratio:16/10;overflow:hidden}
 .card-body{padding:28px}
 .card h3{font-size:19.5px;margin-bottom:10px}
+.card h3 a{color:inherit}
+.card h3 a:hover{color:var(--secondary)}
 .card p{font-size:15px;color:var(--muted);margin-bottom:16px}
-.card .more{font-size:13.5px;font-weight:700;color:var(--secondary)}
+.card .more{display:inline-block;font-size:13.5px;font-weight:700;color:var(--secondary)}
+.card a.more:hover{text-decoration:underline}
+.card a.more + a.more{display:block;margin-top:8px}
+
+/* Card institucional, sem imagem: centraliza o conteúdo em vez de colapsar */
+.card--inst{justify-content:center;border-left:3px solid var(--primary)}
+.card--inst .card-body{padding:30px 28px}
 
 .eq{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
   border:1px solid var(--line);border-radius:6px;overflow:hidden}
@@ -238,6 +251,7 @@ header{position:sticky;top:0;z-index:120;background:rgba(255,255,255,.94);
 .faq-q[aria-expanded="true"]::after{content:"–"}
 .faq-a{display:none;padding:0 40px 26px 0;font-size:15.5px;color:var(--text)}
 .faq-a.is-open,.faq-a.open{display:block}
+.faq-a a{color:var(--secondary);font-weight:600;border-bottom:1px solid rgba(12,99,200,.3)}
 
 /* ---------- 7. NAVEGAÇÃO SEO ---------- */
 .nav-seo{margin-top:14px}
@@ -287,15 +301,24 @@ header{position:sticky;top:0;z-index:120;background:rgba(255,255,255,.94);
   overflow:hidden;height:420px;margin-top:36px}
 .map-frame iframe{width:100%;height:100%;border:0;display:block}
 
-/* Estado preguiçoso: placeholder clicável antes de carregar o iframe */
+/* Placeholder clicável antes de carregar o iframe.
+   Bloco ÚNICO: antes havia duas declarações (seções 8 e 18) disputando o
+   mesmo seletor, e a regra `.map-frame.map-lazy span` vencia `.map-cta`
+   por especificidade, deixando o título do placeholder cinza e pequeno.
+   Serve tanto para a marcação com <strong>/<span> quanto com <span class="map-cta">/<small>. */
 .map-frame.map-lazy{display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:10px;text-align:center;padding:24px;cursor:pointer;
   background:linear-gradient(150deg,#EEF3F9,#E2EAF4);transition:background .25s}
 .map-frame.map-lazy:hover{background:linear-gradient(150deg,#E6EDF6,#D8E3F0)}
 .map-frame.map-lazy:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
-.map-frame.map-lazy strong{font-size:17px;color:var(--dark)}
-.map-frame.map-lazy span{font-size:14px;color:var(--muted);max-width:340px}
 .map-frame.map-lazy .map-pin{font-size:30px;line-height:1}
+.map-frame.map-lazy strong,
+.map-frame.map-lazy .map-cta{font-size:17px;font-weight:700;color:var(--dark);line-height:1.4}
+.map-frame.map-lazy small,
+.map-frame.map-lazy > span:not(.map-cta):not(.map-pin){
+  font-size:13.5px;color:var(--muted);max-width:340px;font-weight:400}
+/* Já carregado: o placeholder some e o iframe ocupa a caixa inteira */
+.map-frame:not(.map-lazy){display:block;padding:0;background:none;cursor:auto}
 
 /* ---------- 9. RODAPÉ ---------- */
 footer.site{background:var(--dark);color:#A9BDD6;padding:76px 0 0;font-size:15px}
@@ -314,7 +337,8 @@ footer.site a:hover{color:var(--primary)}
   padding:11px 14px calc(11px + env(safe-area-inset-bottom,0px));
   background:rgba(255,255,255,.96);backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
-  border-top:1px solid var(--line);box-shadow:0 -6px 22px rgba(8,32,58,.1)}
+  border-top:1px solid var(--line);box-shadow:0 -6px 22px rgba(8,32,58,.1);
+  transition:opacity .25s}
 
 /* Some com a barra enquanto o menu mobile está aberto */
 body.nav-open .wa-bar{opacity:0;pointer-events:none}
@@ -382,6 +406,7 @@ body.nav-open .chat-w{opacity:0;pointer-events:none}
 .chat-w .btn-wa{width:100%;padding:15px 20px;font-size:15px;border-radius:10px;
   animation:none;box-shadow:0 6px 18px rgba(18,140,126,.3)}
 .chat-w .btn-wa:hover{transform:translateY(-2px);animation:none}
+.chat-w .btn-wa::after{animation:none;content:none}
 .chat-w .btn-wa .ico-wa{animation:none}
 .chat-foot{display:block;margin-top:11px;text-align:center;font-size:11.5px;
   color:var(--muted);font-weight:600}
@@ -421,7 +446,7 @@ body.nav-open .chat-w{opacity:0;pointer-events:none}
   .chat-w.is-on{transform:none}
   .chat-msg{transition:none}
   .menu{transition:none}
-  .card:hover,.nav-item:hover,.btn-wa:hover{transform:none}
+  .card:hover,.nav-item:hover,.btn-wa:hover,.il-grid a:hover{transform:none}
 }
 
 /* ==========================================================================
@@ -495,7 +520,43 @@ body > .menu{
     padding:0;overflow:visible;inset:auto}
 }
 
-/* ---------- 14. RESPONSIVO ---------- */
+/* ==========================================================================
+   14. BREADCRUMB
+   ========================================================================== */
+.crumbs{background:var(--light);border-bottom:1px solid var(--line);
+  font-size:13.5px;line-height:1.5;padding:12px 0}
+.crumbs .container{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.crumbs a{color:var(--secondary);font-weight:600}
+.crumbs a:hover{text-decoration:underline}
+.crumbs span{color:var(--muted)}
+.crumbs strong{color:var(--dark);font-weight:700;font-size:13.5px}
+
+/* ==========================================================================
+   15. INTERLINKING CONTEXTUAL
+   ========================================================================== */
+.interlinking{padding:66px 0;background:#fff}
+.interlinking h2{text-align:center;font-size:clamp(22px,2.6vw,30px);margin-bottom:30px}
+.interlinking .il-sub{margin-top:46px}
+.il-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.il-grid a{display:block;padding:16px 18px;background:var(--light);
+  border-left:4px solid var(--primary);border-radius:6px;color:var(--dark);
+  font-weight:600;font-size:15px;line-height:1.45;
+  transition:transform .18s,box-shadow .18s,background .18s}
+.il-grid a:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(8,32,58,.12)}
+
+/* Retorno à página-hub, destacado para diferenciar de link lateral */
+.il-grid a.il-hub{background:linear-gradient(150deg,#0B2A48,#08203A);
+  border-left-color:var(--wa1);color:#fff}
+.il-grid a.il-hub:hover{box-shadow:0 8px 22px rgba(8,32,58,.32)}
+
+/* Página atual dentro do próprio bloco: não linka para si mesma */
+.il-grid a.is-current,.il-grid span.is-current{display:block;padding:16px 18px;
+  background:#EDF1F6;border-left:4px solid var(--muted);border-radius:6px;
+  color:var(--muted);font-weight:600;font-size:15px;pointer-events:none}
+
+/* ==========================================================================
+   16. RESPONSIVO
+   ========================================================================== */
 @media(min-width:1400px){
   .chat-w{width:360px}
   .chat-msg{font-size:15px}
@@ -533,19 +594,33 @@ body > .menu{
   .hero-actions .btn{text-align:center}
   .btn-wa{width:100%;padding:16px 22px;font-size:15px}
   .btn-wa.wa-lg{padding:18px 22px;font-size:16px}
-  .wa-bar{display:block}
-  body{padding-bottom:78px}
   .tab-cmp{font-size:14px}
   .tab-cmp th,.tab-cmp td{padding:12px 14px}
+  .interlinking .il-sub{margin-top:36px}
+
+  /* A barra fixa e o respiro de 78px só se aplicam se a .wa-bar existir
+     de fato no HTML. Sem isso, páginas sem a barra ficavam com uma faixa
+     branca morta no fim e o chat flutuando alto sem motivo. */
+  body:has(.wa-bar) .wa-bar{display:block}
+  body:has(.wa-bar){padding-bottom:78px}
 
   .chat-w{left:12px;right:12px;width:auto;border-radius:14px;
-    bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+    bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  body:has(.wa-bar) .chat-w{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
   .chat-head{padding:13px 42px 13px 14px}
   .chat-avatar,.chat-avatar img,.chat-avatar .fallback{width:42px;height:42px}
   .chat-id strong{font-size:14px}
   .chat-body{padding:17px 14px 14px}
   .chat-msg{font-size:14px;padding:13px 15px}
   .chat-w .btn-wa{padding:14px 18px;font-size:14.5px}
+}
+/* Fallback para navegador sem :has() — mantém o comportamento antigo */
+@supports not selector(:has(*)){
+  @media(max-width:720px){
+    .wa-bar{display:block}
+    body{padding-bottom:78px}
+    .chat-w{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+  }
 }
 @media(max-width:560px){
   .chat-w.is-min .chat-mini{padding:7px 15px 7px 7px}
@@ -570,31 +645,13 @@ body > .menu{
   .chat-w .btn-wa{padding:12px 16px;font-size:14px}
   .chat-foot{margin-top:8px}
 }
-/* ==========================================================================
-   17. INTERLINKING CONTEXTUAL
-   ========================================================================== */
-.interlinking{padding:66px 0;background:#fff}
-.interlinking h2{text-align:center;font-size:clamp(22px,2.6vw,30px);margin-bottom:30px}
-.il-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
-.il-grid a{display:block;padding:16px 18px;background:var(--light);
-  border-left:4px solid var(--primary);border-radius:6px;color:var(--dark);
-  font-weight:600;font-size:15px;transition:transform .18s,box-shadow .18s}
-.il-grid a:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(8,32,58,.12)}
 
 /* ==========================================================================
-   18. MAPA SOB DEMANDA · placeholder (faltava CSS para .map-cta)
+   17. PERFORMANCE · renderização diferida
+   #etapas, #faq e #atendimento ficaram FORA: content-visibility zera a
+   altura do conteúdo não renderizado, o que quebra o cálculo de posição
+   do scrollspy e do scroll-margin justamente nas seções apontadas pelo
+   menu — o clique para lá e o link volta "curto".
    ========================================================================== */
-.map-frame.map-lazy{display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:8px;text-align:center;cursor:pointer;
-  background:var(--light);transition:background .2s}
-.map-frame.map-lazy:hover{background:#EAEFF6}
-.map-frame.map-lazy:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
-.map-cta{font-size:16px;font-weight:700;color:var(--dark)}
-.map-frame.map-lazy small{font-size:13px;color:var(--muted)}
-
-/* ==========================================================================
-   19. PERFORMANCE · renderização diferida (PageSpeed)
-   ========================================================================== */
-#cenarios,#comparativo,#equipamentos,#etapas,#depoimentos,
-#faq,#atendimento,.interlinking{
+#cenarios,#comparativo,#equipamentos,#depoimentos,.interlinking{
   content-visibility:auto;contain-intrinsic-size:auto 700px}
