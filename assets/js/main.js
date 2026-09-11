@@ -69,13 +69,14 @@
 
   /* Regras avaliadas de cima para baixo — a PRIMEIRA que casar vence. */
   var INTENCOES = [
-    {
-      id: 'rural',
-      re: /fazenda|agroneg|produtor rural|propriedade rural|cooperativa|avi[aá]rio|irriga/,
-      msg: 'Oi! 😊 Vi que você procura energia solar para o meio rural. Projetos assim costumam entrar em linhas de crédito com juros bem abaixo do mercado. Quer que eu verifique o seu caso?',
-      cta: 'Quero saber do crédito rural',
-      wa: 'Olá! Tenho interesse em energia solar para propriedade rural{CIDADE_EM}. Gostaria de saber sobre valores e financiamento.'
+        {
+      id: 'manutencao',
+      re: /manuten[cç][aã]o|limpeza|termografia|revis[aã]o|queda de gera|n[aã]o est[aá] gerando|assist[eê]ncia t[eé]cnica/,
+      msg: 'Oi! 😊 Vi que você procura manutenção de energia solar. Se a geração caiu, na maioria dos casos é sujidade ou string aberta — e isso se recupera. Quer que eu avalie o seu caso?',
+      cta: 'Quero avaliar meu sistema',
+      wa: 'Olá! Preciso de manutenção do meu sistema de energia solar{CIDADE_EM}. Vou enviar o print do monitoramento.'
     },
+
     {
       id: 'condominio',
       re: /condom[ií]nio/,
