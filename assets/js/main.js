@@ -67,103 +67,158 @@
       .replace(/[\u0300-\u036f]/g, '');
   }
 
-  /* Regras avaliadas de cima para baixo — a PRIMEIRA que casar vence. */
+  /* ----------------------------------------------------------------------
+     REGRAS DE INTENÇÃO
+
+     O H1 é NORMALIZADO antes do teste (sem acento, minúsculo). Portanto as
+     regex abaixo são escritas SEM acento — classes como [cç] ou [aã] são
+     desnecessárias e apenas mascaram erro de ordenação.
+
+     A ordem é decisiva: avaliação de cima para baixo, a PRIMEIRA que casar
+     vence. Regras específicas SEMPRE antes das genéricas.
+     ---------------------------------------------------------------------- */
   var INTENCOES = [
-        {
+    /* --- 1. Serviços pós-venda (mais específico de todos) --- */
+    {
       id: 'manutencao',
-      re: /manuten[cç][aã]o|limpeza|termografia|revis[aã]o|queda de gera|n[aã]o est[aá] gerando|assist[eê]ncia t[eé]cnica/,
+      re: /manutencao|limpeza|termografia|revisao|queda de gera|nao esta gerando|assistencia tecnica|laudo/,
       msg: 'Oi! 😊 Vi que você procura manutenção do seu sistema solar. Fazemos limpeza técnica, termografia e laudo — inclusive em sistemas instalados por outra empresa. Quer que eu avalie o seu caso?',
       cta: 'Sim, quero avaliar',
       wa: 'Olá! Preciso de manutenção no meu sistema de energia solar{CIDADE_EM}. Vou enviar as informações do sistema.'
     },
 
+    /* --- 2. Financeiro --- */
+    {
+      id: 'financiamento',
+      re: /financiamento|financiar|parcel|credito|prestacao/,
+      msg: 'Oi! 😊 Na maioria dos casos a parcela do financiamento fica próxima — ou até abaixo — do que você já paga de luz hoje. Quer que eu simule com o valor da sua conta?',
+      cta: 'Simular a parcela',
+      wa: 'Olá! Quero simular o financiamento de um sistema de energia solar{CIDADE_EM}.'
+    },
+
+    /* --- 3. Segmentos com cálculo próprio --- */
     {
       id: 'condominio',
-      re: /condom[ií]nio/,
+      re: /condominio/,
       msg: 'Oi! 😊 Energia solar em condomínio zera a conta das áreas comuns e alivia a taxa condominial. Preparo o estudo já formatado para apresentar em assembleia. Quer que eu faça?',
       cta: 'Quero o estudo para assembleia',
       wa: 'Olá! Preciso de um estudo de energia solar para condomínio{CIDADE_EM}, para apresentar em assembleia.'
     },
     {
-      id: 'financiamento',
-      re: /financiamento|financiar|parcel/,
-      msg: 'Oi! 😊 Na maioria dos casos a parcela do financiamento fica próxima — ou até abaixo — do que você já paga de luz hoje. Quer que eu simule com o valor da sua conta?',
-      cta: 'Simular a parcela',
-      wa: 'Olá! Quero simular o financiamento de um sistema de energia solar{CIDADE_EM}.'
+      id: 'agronegocio',
+      re: /agronegocio|agro|rural|aviario|suinocultura|avicultura|leite|irrigacao|secador|propriedade|fazenda|sitio|chacara|granja/,
+      msg: 'Oi! 😊 Em propriedade rural o ganho é maior: dá para compensar a geração entre medidores da mesma titularidade — casa, aviário, secador e irrigação. Quer que eu analise suas faturas?',
+      cta: 'Quero a análise rural',
+      wa: 'Olá! Tenho uma propriedade rural{CIDADE_EM} e quero energia solar. Vou enviar minhas faturas da Copel.'
     },
     {
+      id: 'industrial',
+      re: /industrial|industria|agroindustria|demanda contratada|grupo a|alta tensao/,
+      msg: 'Oi! 😊 Em indústria o estudo passa por demanda contratada, modalidade tarifária e perfil de carga — não só pelo kWh. Quer que eu analise sua fatura completa?',
+      cta: 'Quero o estudo industrial',
+      wa: 'Olá! Quero um estudo de energia solar industrial{CIDADE_EM}. Vou enviar minha fatura.'
+    },
+
+    /* --- 4. Institucional
+           ATENÇÃO: precisa vir ANTES de 'segmento' e de 'preco',
+           senão o termo "empresa" é capturado por eles. --- */
+    {
+      id: 'empresa_prestadora',
+      re: /empresa de energia|empresa de energia solar|empresa fotovolt|empresa para instalar|empresa instala|quem somos|melhor empresa|empresa confiavel/,
+      msg: 'Oi! 😊 Somos de Medianeira, com equipe própria e engenheiro responsável registrado no CREA. Quer conhecer o processo e receber um orçamento sem compromisso?',
+      cta: 'Falar com a equipe',
+      wa: 'Olá! Quero conhecer o trabalho da M&A e receber um orçamento de energia solar{CIDADE_EM}.'
+    },
+
+    /* --- 5. Preço com recorte empresarial (antes do preço genérico) --- */
+    {
       id: 'preco_empresa',
-      re: /(pre[cç]o|custa|custo|or[cç]amento|cota[cç][aã]o|valor).*(empresa|empresarial|comercial|industri|com[eé]rcio)|(empresa|empresarial|comercial|industri|com[eé]rcio).*(pre[cç]o|custa|custo|or[cç]amento|cota[cç][aã]o|valor)/,
+      re: /(preco|custa|custo|orcamento|cotacao|valor).*(empresa|empresarial|comercial|comercio)|(empresa|empresarial|comercial|comercio).*(preco|custa|custo|orcamento|cotacao|valor)/,
       msg: 'Oi! 😊 Para empresa o cálculo muda: além da geração, avaliamos demanda contratada e modalidade tarifária. Me envia a fatura que eu fecho o valor exato?',
       cta: 'Enviar fatura da empresa',
       wa: 'Olá! Quero orçamento de energia solar para minha empresa{CIDADE_EM}. Vou enviar a fatura.'
     },
+
+    /* --- 6. Segmento comercial genérico --- */
     {
       id: 'segmento',
-      re: /supermercado|mercado|loja|restaurante|f[aá]brica|hotel|pousada|escrit[oó]rio|galp[aã]o|posto de combust|academia|cl[ií]nica|escola|igreja|ind[uú]stri|com[eé]rcio|comercial|empresa|empresarial/,
+      re: /supermercado|mercado|loja|restaurante|fabrica|hotel|pousada|escritorio|galpao|posto de combust|academia|clinica|escola|igreja|comercio|comercial|empresas|empresarial|negocio/,
       msg: 'Oi! 😊 Energia é um dos maiores custos fixos de um negócio — e o único que dá para eliminar de vez. Quer que eu calcule quanto sobraria da sua conta por mês?',
       cta: 'Calcular economia do negócio',
       wa: 'Olá! Tenho interesse em energia solar para meu negócio{CIDADE_EM}. Gostaria de um orçamento.'
     },
-    {
-      id: 'preco',
-      re: /pre[cç]o|custa|custo|or[cç]amento|cota[cç][aã]o|valor/,
-      msg: 'Oi! 😊 Vi que você está pesquisando valores. Preço fechado sem ver a fatura é chute — mas com a sua conta em mãos eu fecho o número exato hoje mesmo. Quer que eu calcule?',
-      cta: 'Quero o valor exato',
-      wa: 'Olá! Quero saber o preço de um sistema de energia solar{CIDADE_EM}. Vou enviar minha conta de luz.'
-    },
+
+    /* --- 7. Execução --- */
     {
       id: 'instalacao',
-      re: /instala[cç][aã]o|instalar/,
+      re: /instalacao|instalar/,
       msg: 'Oi! 😊 A instalação é feita com equipe própria, e a maioria das obras residenciais fica pronta em dois a três dias. Quer que eu veja o prazo para o seu telhado?',
       cta: 'Ver prazo da instalação',
       wa: 'Olá! Quero instalar energia solar{CIDADE_EM}. Gostaria de saber prazo e valores.'
     },
     {
-      id: 'equipamento',
-      re: /comprar|kit|placa|painel|pain[eé]is|invers/,
-      msg: 'Oi! 😊 Comprar kit avulso costuma sair mais caro no fim: sem projeto assinado, a Copel não homologa. Quer que eu monte o sistema completo, já com instalação inclusa?',
-      cta: 'Quero o sistema completo',
-      wa: 'Olá! Estou pesquisando placas e kit solar{CIDADE_EM}. Quero saber sobre o sistema completo com instalação.'
-    },
-    {
-      id: 'empresa_prestadora',
-      re: /empresa de energia|empresa para instalar|empresa instala|empresa fotovolt/,
-      msg: 'Oi! 😊 Somos de Medianeira, com equipe própria e engenheiro responsável registrado no CREA. Quer conhecer o processo e receber um orçamento sem compromisso?',
-      cta: 'Falar com a equipe',
-      wa: 'Olá! Quero conhecer o trabalho da M&A e receber um orçamento de energia solar{CIDADE_EM}.'
-    },
-    {
       id: 'projeto',
-      re: /projeto|homologa/,
+      re: /projeto|homologa|art|crea/,
       msg: 'Oi! 😊 Nosso projeto vem com ART no CREA e homologação completa na Copel — você não fala com a concessionária em nenhum momento. Quer que eu detalhe o seu?',
       cta: 'Quero meu projeto',
       wa: 'Olá! Preciso de projeto de energia solar{CIDADE_EM} com homologação na Copel.'
     },
     {
+      id: 'equipamento',
+      re: /comprar|kit|placa|painel|paineis|invers|modulo/,
+      msg: 'Oi! 😊 Comprar kit avulso costuma sair mais caro no fim: sem projeto assinado, a Copel não homologa. Quer que eu monte o sistema completo, já com instalação inclusa?',
+      cta: 'Quero o sistema completo',
+      wa: 'Olá! Estou pesquisando placas e kit solar{CIDADE_EM}. Quero saber sobre o sistema completo com instalação.'
+    },
+
+    /* --- 8. Preço genérico --- */
+    {
+      id: 'preco',
+      re: /preco|custa|custo|orcamento|cotacao|valor|quanto/,
+      msg: 'Oi! 😊 Vi que você está pesquisando valores. Preço fechado sem ver a fatura é chute — mas com a sua conta em mãos eu fecho o número exato hoje mesmo. Quer que eu calcule?',
+      cta: 'Quero o valor exato',
+      wa: 'Olá! Quero saber o preço de um sistema de energia solar{CIDADE_EM}. Vou enviar minha conta de luz.'
+    },
+
+    /* --- 9. Residencial (mais genérico, por último) --- */
+    {
       id: 'residencial',
-      re: /casa|resid[eê]ncia|residencial|domiciliar|sobrado/,
+      re: /casa|residencia|residencial|domiciliar|sobrado|apartamento/,
       msg: 'Oi! 😊 Em casa o retorno costuma vir entre o quarto e o sexto ano, e a conta cai para a taxa mínima. Quer que eu calcule com o seu consumo real?',
       cta: 'Calcular minha economia',
       wa: 'Olá! Quero energia solar na minha casa{CIDADE_EM}. Gostaria do cálculo de economia.'
     }
   ];
 
-  /* Descobre a cidade citada no H1 (prioriza o nome mais longo) */
+  /* Descobre a cidade citada no H1 (prioriza o nome mais longo).
+     Fallback para <meta name="geo.placename">, útil em H1 sem cidade. */
   function detectarCidade(h1Normalizado) {
     var achada = '';
+
     CIDADES.forEach(function (cidade) {
       if (h1Normalizado.indexOf(normalizar(cidade)) !== -1 && cidade.length > achada.length) {
         achada = cidade;
       }
     });
+
+    if (!achada) {
+      var meta = document.querySelector('meta[name="geo.placename"]');
+      if (meta && meta.content) {
+        var nome = meta.content.split(',')[0].trim();
+        var nomeN = normalizar(nome);
+        CIDADES.forEach(function (cidade) {
+          if (normalizar(cidade) === nomeN) achada = cidade;
+        });
+      }
+    }
+
     return achada;
   }
 
   /* Resolve o contexto completo da página */
   function resolverContexto() {
     var h1 = document.querySelector('h1');
-    var h1n = normalizar(h1 ? h1.textContent : '');
+    var h1n = normalizar(h1 ? h1.textContent : document.title);
     var cidade = detectarCidade(h1n);
     var sufixo = cidade ? ' em ' + cidade : '';
     var regra = null;
@@ -238,7 +293,7 @@
     var overlay = document.getElementById('overlay');
     var header  = document.querySelector('header');
 
-    if (!burger || !menu) return;
+    if (!burger || !menu || !menu.parentNode) return;
 
     /* Marca o lugar original do menu dentro do <nav>, para devolvê-lo
        quando a tela voltar a ser desktop. */
@@ -279,9 +334,7 @@
       }
     }
 
-    /* O parâmetro "restaurar" é mantido apenas por compatibilidade:
-       como o body não é mais deslocado, a posição nunca é perdida. */
-    function fechar(restaurar) {
+    function fechar() {
       if (!estaAberto()) return;
 
       menu.classList.remove('is-open');
@@ -298,8 +351,10 @@
       if (mq.matches) {
         if (menu.parentNode !== document.body) document.body.appendChild(menu);
       } else {
-        fechar(false);
-        if (menu.parentNode === document.body) slot.parentNode.insertBefore(menu, slot);
+        fechar();
+        if (menu.parentNode === document.body && slot.parentNode) {
+          slot.parentNode.insertBefore(menu, slot);
+        }
       }
     }
 
@@ -311,7 +366,7 @@
 
     /* ---- Fundo escuro ---- */
     if (overlay) {
-      overlay.addEventListener('click', function () { fechar(); });
+      overlay.addEventListener('click', fechar);
     }
 
     /* ---- Clique em qualquer ponto fora do menu e fora do burger ---- */
@@ -342,7 +397,7 @@
 
           if (alvo) {
             e.preventDefault();
-            fechar(false);
+            fechar();
 
             /* Espera o destravamento antes de calcular a posição */
             requestAnimationFrame(function () {
@@ -363,7 +418,7 @@
         }
 
         /* Link externo ou para outra página: só fecha */
-        fechar(false);
+        fechar();
       });
     });
 
@@ -453,6 +508,7 @@
     Array.prototype.forEach.call(box.querySelectorAll('.chat-avatar img'), function (img) {
       img.addEventListener('error', function () {
         var pai = img.parentNode;
+        if (!pai) return;
         pai.innerHTML = '<span class="fallback">MA</span>';
         pai.classList.add('sem-foto');
       });
@@ -529,7 +585,7 @@
      ====================================================================== */
   function iniciarMapaSobDemanda() {
     var box = document.getElementById('mapBox');
-    if (!box) return;
+    if (!box || !box.dataset.src) return;
 
     var carregado = false;
 
